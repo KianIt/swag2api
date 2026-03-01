@@ -10,6 +10,33 @@ import (
 	"github.com/KianIt/swag2api/validator"
 )
 
+// Generate is an entry point for the API generation.
+//
+// It parses information from swag annotations and source code
+// and uses it to build the API.
+//
+// On the validation stage it checks that
+// the source code directory exists,
+// the swag main file exists, and
+// the generated API file doesn't exists (deletes if existed).
+//
+// On the parsing stage it reads the function definitions
+// from the source code and joins them with the corresponding
+// swag annotations to obtain the complete information
+// about the functions and the future API.
+//
+// On the building stage it uses the parsing information
+// to generate HTTP handlers for all the annotated function,
+// every function handler uses an HTTP request to properly call
+// the annotated function and return its results.
+// All the function handlers are available via a
+// signle HTTP handler that dispatches requests to the API.
+//
+// Params:
+//   - pkgPath: path to the source code directory;
+//   - mainFile: name of the swag main file;
+//   - apiFile: name of the generated API file;
+//   - handlerName: name of the API HTTP handler.
 func Generate(pkgPath, mainFile, apiFile, handlerName string) error {
 	log.Printf("Generating API from '%s' into '%s' with HTTP handler '%s'", pkgPath, apiFile, handlerName)
 

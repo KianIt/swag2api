@@ -18,11 +18,15 @@ import (
 
 const templatesRelativePath = "./templates"
 
+// Manager is a manager for source code templates.
+//
+// Loads, keeps and returns templates.
 type Manager struct {
 	fs      *token.FileSet
 	declMap map[string]ast.Decl
 }
 
+// NewManager returns a new template manager.
 func NewManager() *Manager {
 	return &Manager{
 		fs:      token.NewFileSet(),
@@ -30,6 +34,10 @@ func NewManager() *Manager {
 	}
 }
 
+// Load loads templates from the source code.
+//
+// Determines the template source code actual absoule path,
+// parses the source code files and saves the templates.
 func (m *Manager) Load() error {
 	log.Printf("Loading templates")
 
@@ -54,6 +62,7 @@ func (m *Manager) Load() error {
 	return nil
 }
 
+// parseFiles parses files from the template source code.
 func (m *Manager) parseFiles(dirPath string) ([]*ast.File, error) {
 	files := make([]*ast.File, 0)
 
@@ -77,6 +86,9 @@ func (m *Manager) parseFiles(dirPath string) ([]*ast.File, error) {
 	return files, nil
 }
 
+// Visit implements the ast.Visitor interface.
+//
+// Allows the Manager to walk over nodes in a parsed file.
 func (m *Manager) Visit(node ast.Node) ast.Visitor {
 	if node == nil {
 		return nil
@@ -86,6 +98,7 @@ func (m *Manager) Visit(node ast.Node) ast.Visitor {
 	case *ast.File:
 		return m
 	case *ast.GenDecl:
+		// Parsing general declarations.
 		for _, spec := range decl.Specs {
 			if typeSpec, ok := spec.(*ast.TypeSpec); ok && models.IsExistingTemplate(typeSpec.Name.Name) {
 				m.declMap[typeSpec.Name.Name] = decl
@@ -94,6 +107,7 @@ func (m *Manager) Visit(node ast.Node) ast.Visitor {
 
 		return m
 	case *ast.FuncDecl:
+		// Parsing function declarations.
 		if models.IsExistingTemplate(decl.Name.Name) {
 			m.declMap[decl.Name.Name] = decl
 		}
@@ -104,6 +118,7 @@ func (m *Manager) Visit(node ast.Node) ast.Visitor {
 	return nil
 }
 
+// GetTemplates returns loaded templates.
 func (m *Manager) GetTemplates() ([]astModels.Decl, error) {
 	if m.declMap == nil {
 		return nil, errors.New("decl map is nil")
@@ -119,6 +134,7 @@ func (m *Manager) GetTemplates() ([]astModels.Decl, error) {
 	return decls, nil
 }
 
+// getTemplatesAbsPath returns the template source code actual absolute path.
 func getTemplatesAbsPath() (string, error) {
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {

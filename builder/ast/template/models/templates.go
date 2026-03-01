@@ -11,6 +11,7 @@ const (
 	WriteResponse    = "_writeResponse"
 )
 
+// TemplateNames is a list of all templates.
 var TemplateNames = []string{
 	BaseResponse,
 	UnmarshalString,
@@ -20,6 +21,7 @@ var TemplateNames = []string{
 	WriteResponse,
 }
 
+// IsExistingTemplate checks if a template with a given name exists.
 func IsExistingTemplate(name string) bool {
 	return utils.Contains(TemplateNames, name)
 }

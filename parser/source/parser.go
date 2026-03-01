@@ -20,6 +20,11 @@ import (
 	"github.com/KianIt/swag2api/utils"
 )
 
+// SourceParser is a source code parser.
+//
+// Uses the built-in AST features to parse the functions.
+// Also parses the main package name, file imports,
+// HTTP handler information.
 type SourceParser struct {
 	fs          *token.FileSet
 	PkgName     string
@@ -28,6 +33,7 @@ type SourceParser struct {
 	HTTPHandler models.HTTPHandlerInfo
 }
 
+// NewSourceParser returns a new source code parser.
 func NewSourceParser() *SourceParser {
 	return &SourceParser{
 		fs:      token.NewFileSet(),
@@ -36,11 +42,16 @@ func NewSourceParser() *SourceParser {
 	}
 }
 
+// Parse runs parsing.
+//
+// Walks over every file in the package (and subpackages)
+// and reads definitions of all the visited functions.
 func (p *SourceParser) Parse(pkgPath, handlerName string) error {
 	log.Printf("Parsing source code from '%s'", pkgPath)
 
 	p.HTTPHandler.Name = handlerName
 
+	// Getting a file list.
 	files, err := p.parseFiles(pkgPath)
 	if err != nil {
 		return fmt.Errorf("files: %w", err)
@@ -48,6 +59,7 @@ func (p *SourceParser) Parse(pkgPath, handlerName string) error {
 
 	sort.Slice(files, func(i, j int) bool { return files[i].Name.Name < files[j].Name.Name })
 
+	// Parsing every file.
 	for _, file := range files {
 		ast.Walk(p, file)
 	}
@@ -57,19 +69,23 @@ func (p *SourceParser) Parse(pkgPath, handlerName string) error {
 	return nil
 }
 
+// parseFiles parses the source code package and returns a list of files.
 func (p *SourceParser) parseFiles(pkgPath string) ([]*ast.File, error) {
 	files := make([]*ast.File, 0)
 
 	if err := filepath.Walk(pkgPath, func(path string, info os.FileInfo, err error) error {
+		// Skipping not Golang source code files.
 		if !utils.IsGoSource(info) {
 			return nil
 		}
 
+		// Parsing a source code file.
 		file, parseErr := parser.ParseFile(p.fs, path, nil, parser.ParseComments)
 		if parseErr != nil {
 			return fmt.Errorf("file '%s': %w", path, parseErr)
 		}
 
+		// If package path is root then it's a main package.
 		if p.PkgName == "" && path == filepath.Base(path) {
 			p.PkgName = file.Name.Name
 		}
@@ -84,6 +100,9 @@ func (p *SourceParser) parseFiles(pkgPath string) ([]*ast.File, error) {
 	return files, nil
 }
 
+// Visit implements the ast.Visitor interface.
+//
+// Allows the SourceParser to walk over nodes in a parsed file.
 func (p *SourceParser) Visit(node ast.Node) ast.Visitor {
 	if node == nil {
 		return nil
@@ -91,17 +110,21 @@ func (p *SourceParser) Visit(node ast.Node) ast.Visitor {
 
 	switch decl := node.(type) {
 	case *ast.File:
+		// Skipping files from non-main packages.
 		if decl.Name.Name != p.PkgName {
 			return nil
 		}
 
 		return p
 	case *ast.GenDecl:
+		// Trying to update the HTTP handler information.
 		p.checkHTTPHandler(decl)
+		// Parsing file imports.
 		p.parseImports(decl)
 
 		return p
 	case *ast.FuncDecl:
+		// Parsing a function.
 		if err := p.parseFuncDecl(decl); err != nil {
 			log.Printf("Error: parsing function '%s' declaration failed: %v", decl.Name.Name, err)
 		}
@@ -112,6 +135,7 @@ func (p *SourceParser) Visit(node ast.Node) ast.Visitor {
 	return nil
 }
 
+// checkHTTPHandler tries to update the HTTP handler information.
 func (p *SourceParser) checkHTTPHandler(decl *ast.GenDecl) {
 	if decl.Tok != token.VAR || decl == nil {
 		return
@@ -129,6 +153,7 @@ func (p *SourceParser) checkHTTPHandler(decl *ast.GenDecl) {
 	}
 }
 
+// parseImports tries to parse file imports.
 func (p *SourceParser) parseImports(decl *ast.GenDecl) {
 	if decl.Tok != token.IMPORT || decl == nil {
 		return
@@ -155,6 +180,7 @@ func (p *SourceParser) parseImports(decl *ast.GenDecl) {
 	}
 }
 
+// parseFuncDecl parsees a function declaration.
 func (p *SourceParser) parseFuncDecl(decl *ast.FuncDecl) error {
 	if decl == nil {
 		return errors.New("declaration is nil")
@@ -162,11 +188,13 @@ func (p *SourceParser) parseFuncDecl(decl *ast.FuncDecl) error {
 
 	log.Printf("Parsing function '%s'", decl.Name.Name)
 
+	// Params.
 	params, err := p.fieldList2Params(decl.Type.Params)
 	if err != nil {
 		return fmt.Errorf("params: %w", err)
 	}
 
+	// Results.
 	results, err := p.fieldList2Results(decl.Type.Results)
 	if err != nil {
 		return fmt.Errorf("results: %w", err)
@@ -181,6 +209,7 @@ func (p *SourceParser) parseFuncDecl(decl *ast.FuncDecl) error {
 	return nil
 }
 
+// fieldList2Params converts an *ast.FieldList into a s2aModels.Params.
 func (p *SourceParser) fieldList2Params(fieldList *ast.FieldList) (s2aModels.Params, error) {
 	if fieldList == nil {
 		return make(s2aModels.Params, 0), nil
@@ -199,6 +228,7 @@ func (p *SourceParser) fieldList2Params(fieldList *ast.FieldList) (s2aModels.Par
 	return params, nil
 }
 
+// field2Params converts an *ast.Field into a s2aModels.Params.
 func (p *SourceParser) field2Params(field *ast.Field) (s2aModels.Params, error) {
 	if field == nil {
 		return make(s2aModels.Params, 0), nil
@@ -209,10 +239,12 @@ func (p *SourceParser) field2Params(field *ast.Field) (s2aModels.Params, error) 
 		return nil, fmt.Errorf("type: %w", err)
 	}
 
+	// if no names, then it's an unnamed field.
 	if len(field.Names) == 0 {
 		return s2aModels.Params{{Field: s2aModels.Field{Name: "", TypeExpr: typeExpr}, Type: paramType}}, nil
 	}
 
+	// Several fields with different names and the same type.
 	params := make(s2aModels.Params, 0, len(field.Names))
 	for _, name := range field.Names {
 		params = append(params, s2aModels.Param{Field: s2aModels.Field{Name: name.Name, TypeExpr: typeExpr}, Type: paramType})
@@ -221,6 +253,7 @@ func (p *SourceParser) field2Params(field *ast.Field) (s2aModels.Params, error) 
 	return params, nil
 }
 
+// fieldList2Results converts an*ast.FieldList into a s2aModels.Results.
 func (p *SourceParser) fieldList2Results(fieldList *ast.FieldList) (s2aModels.Results, error) {
 	if fieldList == nil {
 		return make(s2aModels.Results, 0), nil
@@ -241,6 +274,9 @@ func (p *SourceParser) fieldList2Results(fieldList *ast.FieldList) (s2aModels.Re
 	return results, nil
 }
 
+// field2Results converts an *ast.Field into a s2aModels.Results
+//
+// Gives a default name to the unnamed results.
 func (p *SourceParser) field2Results(field *ast.Field, idx int) (s2aModels.Results, error) {
 	if field == nil {
 		return make(s2aModels.Results, 0), nil
@@ -251,10 +287,12 @@ func (p *SourceParser) field2Results(field *ast.Field, idx int) (s2aModels.Resul
 		return nil, fmt.Errorf("type: %w", err)
 	}
 
+	// if no names, then it's an unnamed field.
 	if len(field.Names) == 0 {
 		return s2aModels.Results{{Field: s2aModels.Field{Name: fmt.Sprintf("res%d", idx), TypeExpr: typeExpr}}}, nil
 	}
 
+	// Several fields with different names and the same type.
 	results := make(s2aModels.Results, 0, len(field.Names))
 	for _, name := range field.Names {
 		results = append(results, s2aModels.Result{Field: s2aModels.Field{Name: name.Name, TypeExpr: typeExpr}})
@@ -263,6 +301,7 @@ func (p *SourceParser) field2Results(field *ast.Field, idx int) (s2aModels.Resul
 	return results, nil
 }
 
+// getType parses a type expression and a s2aModels.ParamType from an ast.Expr.
 func (p *SourceParser) getType(expr ast.Expr) (string, s2aModels.ParamType, error) {
 	var buf bytes.Buffer
 
@@ -280,9 +319,11 @@ func (p *SourceParser) getType(expr ast.Expr) (string, s2aModels.ParamType, erro
 	return typeExpr, paramType, nil
 }
 
+// getParamType parses a s2aModels.ParamType from a type expression.
 func (p *SourceParser) getParamType(typeExpr string) (s2aModels.ParamType, error) {
 	var paramType s2aModels.ParamType
 
+	// Trying to parse a simple type.
 	switch typeExpr {
 	case "uint8", "int8", "uint16", "int16", "byte", "int32", "uint32", "rune", "uint64", "int64", "int", "uint":
 		paramType = s2aModels.Int
@@ -302,15 +343,19 @@ func (p *SourceParser) getParamType(typeExpr string) (s2aModels.ParamType, error
 		return paramType, nil
 	}
 
+	// Prefix [] means a slice.
 	if strings.HasPrefix(typeExpr, "[]") {
+		// Trying to parse the slice item type.
 		subType, err := p.getParamType(typeExpr[2:])
 		if err != nil {
 			return "", err
 		}
 
+		// Returning a slice.
 		return subType.SliceOf(), nil
 	}
 
+	// Prefix map[ means a slice.
 	if strings.HasPrefix(typeExpr, "map[") {
 		idx := strings.Index(typeExpr, "]")
 
@@ -318,18 +363,22 @@ func (p *SourceParser) getParamType(typeExpr string) (s2aModels.ParamType, error
 			return "", fmt.Errorf("invalid map type: '%s'", typeExpr)
 		}
 
+		// Trying to parse the map value type.
 		subType, err := p.getParamType(typeExpr[idx+1:])
 		if err != nil {
 			return "", err
 		}
 
+		// Returning a slice.
 		return subType.MapOf(), nil
 	}
 
+	// If custom type, then adding the package name.
 	paramType = s2aModels.ParamType(typeExpr)
 	if !strings.Contains(typeExpr, ".") {
 		paramType = s2aModels.ParamType(p.PkgName) + "." + paramType
 	}
 
+	// Returning a custom type.
 	return paramType.CustomOf(), nil
 }

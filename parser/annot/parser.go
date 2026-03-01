@@ -19,11 +19,15 @@ const (
 	parseDepth = 100
 )
 
+// AnnotParser is a swag annotations parser.
+//
+// Uses the swag.Parser to parse the annotations.
 type AnnotParser struct {
 	swag  *swag.Parser
 	Funcs s2aModels.Functions
 }
 
+// NewAnnotParser returns a new swag annotations parser.
 func NewAnnotParser() *AnnotParser {
 	return &AnnotParser{
 		swag:  swag.New(swag.SetParseDependency(parseFlags)),
@@ -31,6 +35,10 @@ func NewAnnotParser() *AnnotParser {
 	}
 }
 
+// Parse runs parsing.
+//
+// Runs the swag.Parser and uses its results to obtain
+// information about functions.
 func (p *AnnotParser) Parse(pkgPath, mainFile string) error {
 	log.Printf("Parsing swag annotations from '%s'", pkgPath)
 
@@ -38,6 +46,7 @@ func (p *AnnotParser) Parse(pkgPath, mainFile string) error {
 		return fmt.Errorf("swag: %w", err)
 	}
 
+	// Parsing every method of every path.
 	for path, item := range p.swag.GetSwagger().Paths.Paths {
 		if err := p.parsePath(path, item); err != nil {
 			return fmt.Errorf("path '%s': %w", path, err)
@@ -51,6 +60,7 @@ func (p *AnnotParser) Parse(pkgPath, mainFile string) error {
 	return nil
 }
 
+// parsePath parses path information.
 func (p *AnnotParser) parsePath(path string, item spec.PathItem) error {
 	if item.Get != nil {
 		if err := p.parseMethod(http.MethodGet, path, item.Get); err != nil {
@@ -97,6 +107,7 @@ func (p *AnnotParser) parsePath(path string, item spec.PathItem) error {
 	return nil
 }
 
+// parseMethod parses method information.
 func (p *AnnotParser) parseMethod(method, path string, op *spec.Operation) error {
 	if op == nil {
 		return fmt.Errorf("op is nil")
@@ -125,6 +136,7 @@ func (p *AnnotParser) parseMethod(method, path string, op *spec.Operation) error
 	return nil
 }
 
+// parameters2Params converts a list of spec.Parameter into a s2aModels.Params.
 func parameters2Params(parameters []spec.Parameter) (s2aModels.Params, error) {
 	params := make(s2aModels.Params, 0, len(parameters))
 
@@ -140,6 +152,7 @@ func parameters2Params(parameters []spec.Parameter) (s2aModels.Params, error) {
 	return params, nil
 }
 
+// parameters2Params converts a spec.Parameter into a s2aModels.Param.
 func parameter2Param(parameter spec.Parameter) (s2aModels.Param, error) {
 	paramOrigin, err := s2aModels.GetParamOrigin(parameter.In)
 	if err != nil {
@@ -162,6 +175,10 @@ func parameter2Param(parameter spec.Parameter) (s2aModels.Param, error) {
 	return param, nil
 }
 
+// getParamType parses a s2aModels.ParamType from a spec.Parameter.
+//
+// Uses data from the parameter schema if the parameter type is given.
+// Otherwise constructs a custom schema from parameter data and uses it.
 func getParamType(parameter spec.Parameter) (s2aModels.ParamType, error) {
 	var schema *spec.Schema
 
@@ -191,20 +208,26 @@ func getParamType(parameter spec.Parameter) (s2aModels.ParamType, error) {
 	return getSchemaParamType(schema)
 }
 
+// getSchemaParamType parses a s2aModels.ParamType from a *spec.Schema.
 func getSchemaParamType(schema *spec.Schema) (s2aModels.ParamType, error) {
 	if schema == nil {
 		return "", errors.New("schema is nil")
 	}
 
+	// If the schema type is not given, then it's a custom or any type.
 	if len(schema.Type) == 0 || schema.Type[0] == "" {
+		// Getting the custom type name from the URL.
 		if url := schema.Ref.GetURL(); url != nil {
 			subType := s2aModels.ParamType(path.Base(url.String()))
+
+			// Returning a custom type.
 			return subType.CustomOf(), nil
 		} else {
 			return s2aModels.Any, nil
 		}
 	}
 
+	// Parsing swag type.
 	var paramType s2aModels.ParamType
 	switch schema.Type[0] {
 	case swag.STRING:
@@ -220,11 +243,13 @@ func getSchemaParamType(schema *spec.Schema) (s2aModels.ParamType, error) {
 	case swag.INTERFACE, swag.ANY:
 		paramType = s2aModels.Any
 	case swag.ARRAY:
+		// Array is a slice.
 		var (
 			subType s2aModels.ParamType
 			err     error
 		)
 
+		// If the items given, trying to get the item type.
 		if schema.Items != nil {
 			subType, err = getSchemaParamType(schema.Items.Schema)
 			if err != nil {
@@ -232,13 +257,18 @@ func getSchemaParamType(schema *spec.Schema) (s2aModels.ParamType, error) {
 			}
 		}
 
+		// Returning a slice.
 		paramType = subType.SliceOf()
 	case swag.OBJECT:
+		// Object is a map.
+
+		// Trying to get the value type.
 		subType, err := getSchemaParamType(schema.AdditionalProperties.Schema)
 		if err != nil {
 			return "", err
 		}
 
+		// Returning a map.
 		paramType = subType.MapOf()
 	}
 

@@ -12,6 +12,7 @@ var (
 	errNotFile      = errors.New("not a file")
 )
 
+// ValidatePkg validates that the source code directory exists.
 func ValidatePkg(pkgPath string) error {
 	info, err := os.Stat(pkgPath)
 	if err != nil {
@@ -28,6 +29,7 @@ func ValidatePkg(pkgPath string) error {
 	return nil
 }
 
+// ValidateMainFile validates that the swag main file exists.
 func ValidateMainFile(mainPath string) error {
 	info, err := os.Stat(mainPath)
 	if err != nil {
@@ -44,6 +46,8 @@ func ValidateMainFile(mainPath string) error {
 	return nil
 }
 
+// ValidateAPIFile validates that the generated API file doesn't exists.
+// Deletes the file if it already exists.
 func ValidateAPIFile(apiPath string) error {
 	info, err := os.Stat(apiPath)
 	if err != nil {

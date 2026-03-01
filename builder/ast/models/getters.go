@@ -5,6 +5,7 @@ import (
 	"go/token"
 )
 
+// GetField returns as AST field.
 func GetField(name, typeExpr, tag string) Field {
 	return &ast.Field{
 		Names: []*ast.Ident{ast.NewIdent(name)},
@@ -13,6 +14,15 @@ func GetField(name, typeExpr, tag string) Field {
 	}
 }
 
+// GetStringBasicLit returns an AST string literal.
+func GetStringBasicLit(value string) BasicLit {
+	return &ast.BasicLit{
+		Kind:  token.STRING,
+		Value: value,
+	}
+}
+
+// GetNeqExpr returns as AST Not Equal expression.
 func GetNeqExpr(left, right Expr) Expr {
 	return &ast.BinaryExpr{
 		Op: token.NEQ,
@@ -21,6 +31,7 @@ func GetNeqExpr(left, right Expr) Expr {
 	}
 }
 
+// GetCallExpr returns as AST Calling expression.
 func GetCallExpr(caller Expr, params Exprs) Expr {
 	return &ast.CallExpr{
 		Fun:  caller,
@@ -28,6 +39,7 @@ func GetCallExpr(caller Expr, params Exprs) Expr {
 	}
 }
 
+// GetSelectorExpr returns an AST Selector expression.
 func GetSelectorExpr(source Expr, item string) Expr {
 	return &ast.SelectorExpr{
 		X:   source,
@@ -35,18 +47,38 @@ func GetSelectorExpr(source Expr, item string) Expr {
 	}
 }
 
+// GetStructLitExpr returns an AST struct literal.
+func GetStructLitExpr(name string, elements Exprs) Expr {
+	return &ast.CompositeLit{
+		Type: ast.NewIdent(name),
+		Elts: elements.Ast(),
+	}
+}
+
+// GetKeyValueExpr returns an AST Key-Value expression.
+func GetKeyValueExpr(key, value Expr) Expr {
+	return &ast.KeyValueExpr{
+		Key:   key,
+		Value: value,
+	}
+}
+
+// GetNameExpr returns an AST Name expression.
 func GetNameExpr(name string) Expr {
 	return ast.NewIdent(name)
 }
 
+// GetAssignStmt returns an AST Assign statement.
 func GetAssignStmt(left, right Exprs) Stmt {
 	return getAssignStmt(left, right, token.ASSIGN)
 }
 
+// GetAssignDefineStmt returns an AST Assign (Define) statement.
 func GetAssignDefineStmt(left, right Exprs) Stmt {
 	return getAssignStmt(left, right, token.DEFINE)
 }
 
+// getAssignStmt returns an AST assign statement.
 func getAssignStmt(left, right Exprs, tok token.Token) Stmt {
 	return &ast.AssignStmt{
 		Lhs: left.Ast(),
@@ -55,6 +87,7 @@ func getAssignStmt(left, right Exprs, tok token.Token) Stmt {
 	}
 }
 
+// GetStructStmt returns an AST Struct statement.
 func GetStructStmt(name string, fields Fields) Stmt {
 	return &ast.DeclStmt{
 		Decl: &ast.GenDecl{
@@ -73,6 +106,7 @@ func GetStructStmt(name string, fields Fields) Stmt {
 	}
 }
 
+// GetIfStmt returns an AST If statement.
 func GetIfStmt(cond Expr, bodyStmts Stmts) Stmt {
 	return &ast.IfStmt{
 		Cond: cond,
@@ -82,12 +116,14 @@ func GetIfStmt(cond Expr, bodyStmts Stmts) Stmt {
 	}
 }
 
+// GetExprStmt returns an AST expression as statement.
 func GetExprStmt(expr Expr) Stmt {
 	return &ast.ExprStmt{
 		X: expr,
 	}
 }
 
+// GetVarDecl returns an AST Variable declaration.
 func GetVarDecl(name, typeExpr string) Decl {
 	return &ast.GenDecl{
 		Tok: token.VAR,
@@ -100,6 +136,7 @@ func GetVarDecl(name, typeExpr string) Decl {
 	}
 }
 
+// GetFuncDecl returns an AST Function declaration.
 func GetFuncDecl(name string, params Fields, bodyStmts Stmts) Decl {
 	return &ast.FuncDecl{
 		Type: &ast.FuncType{
@@ -112,26 +149,5 @@ func GetFuncDecl(name string, params Fields, bodyStmts Stmts) Decl {
 		Body: &ast.BlockStmt{
 			List: bodyStmts.Ast(),
 		},
-	}
-}
-
-func GetStringBasicLit(value string) BasicLit {
-	return &ast.BasicLit{
-		Kind:  token.STRING,
-		Value: value,
-	}
-}
-
-func GetStructLitExpr(name string, elements Exprs) Expr {
-	return &ast.CompositeLit{
-		Type: ast.NewIdent(name),
-		Elts: elements.Ast(),
-	}
-}
-
-func GetKeyValueExpr(key, value Expr) Expr {
-	return &ast.KeyValueExpr{
-		Key:   key,
-		Value: value,
 	}
 }

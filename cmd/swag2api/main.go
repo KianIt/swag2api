@@ -25,7 +25,7 @@ func initFlags() {
 	pkgPath = flag.String("pkg", defaultPkgPath, "Path to the Golang package")
 	mainFile = flag.String("main", defaultMainFile, "Name of the swag main file")
 	apiFile = flag.String("to", defaultAPIFile, "Name of the generated API file")
-	handlerName = flag.String("handler", defaultHandlerName, "Name of the HTTP handler")
+	handlerName = flag.String("handler", defaultHandlerName, "Name of the API HTTP handler")
 	flag.Parse()
 }
 

@@ -15,6 +15,7 @@ type (
 	Decl     ast.Decl
 )
 
+// Ast returns Fields as []*ast.Field.
 func (fs Fields) Ast() []*ast.Field {
 	astFs := make([]*ast.Field, 0, len(fs))
 
@@ -25,6 +26,7 @@ func (fs Fields) Ast() []*ast.Field {
 	return astFs
 }
 
+// Ast returns Exprs as []ast.Expr.
 func (es Exprs) Ast() []ast.Expr {
 	astEs := make([]ast.Expr, 0, len(es))
 
@@ -35,6 +37,7 @@ func (es Exprs) Ast() []ast.Expr {
 	return astEs
 }
 
+// Ast returns Stmts as []ast.Stmt.
 func (ss Stmts) Ast() []ast.Stmt {
 	astSs := make([]ast.Stmt, 0, len(ss))
 
