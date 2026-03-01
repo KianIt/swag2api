@@ -6,27 +6,16 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 
 	"github.com/KianIt/swag2api/example/models"
 )
 
-type _baseResponse struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg,omitempty"`
+type _errorResponse struct {
+	Error string `json:"error"`
 }
 
 func _unmarshalString[T any](value string) (buf T, err error) {
-	var data []byte
-	if strings.Contains(value, ",") {
-		data, err = json.Marshal(strings.Split(value, ","))
-		if err != nil {
-			return buf, fmt.Errorf("list marshal: %w", err)
-		}
-	} else {
-		data = []byte(value)
-	}
-	return _unmarshalBytes[T](data)
+	return _unmarshalBytes[T]([]byte(value))
 }
 func _unmarshalBytes[T any](value []byte) (buf T, err error) {
 	if err := json.Unmarshal(value, &buf); err != nil {
@@ -42,8 +31,8 @@ func _handleBadRequest(w http.ResponseWriter, err error) {
 	if err != nil {
 		msg = err.Error()
 	}
-	response := _baseResponse{Code: code, Msg: msg}
-	_writeResponse(w, response.Code, response)
+	response := _errorResponse{Error: msg}
+	_writeResponse(w, code, response)
 }
 func _handleResult(w http.ResponseWriter, err error, response any) {
 	if err != nil {
@@ -52,14 +41,15 @@ func _handleResult(w http.ResponseWriter, err error, response any) {
 			Unwrap() error
 		}); ok {
 			if e := cu.Unwrap(); e != nil {
-				_writeResponse(w, cu.Code(), _baseResponse{Code: cu.Code(), Msg: e.Error()})
-				return
+				_writeResponse(w, cu.Code(), _errorResponse{Error: e.Error()})
+			} else if response == nil {
+				_writeResponse(w, cu.Code(), _errorResponse{Error: http.StatusText(cu.Code())})
 			} else {
 				_writeResponse(w, cu.Code(), response)
-				return
 			}
+			return
 		} else {
-			_writeResponse(w, http.StatusInternalServerError, _baseResponse{Code: http.StatusInternalServerError, Msg: err.Error()})
+			_writeResponse(w, http.StatusInternalServerError, _errorResponse{Error: err.Error()})
 			return
 		}
 	}
@@ -102,13 +92,19 @@ func _handler_method1(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	result, err := method1(pathString, pathInt, pathFloat64, pathBool, pathBytes)
-	type resultType struct {
-		_baseResponse `json:",inline"`
-		Result        string `json:"result"`
-		Err           error  `json:"err"`
+	type _resultType struct {
+		Result string `json:"result"`
 	}
-	resultValue := resultType{_baseResponse: _baseResponse{Code: http.StatusOK, Msg: http.StatusText(http.StatusOK)}, Result: result, Err: err}
-	_handleResult(w, err, resultValue)
+	_resultValue := _resultType{Result: result}
+	_handleResult(w, err, _resultValue)
+}
+func _handler_method10(w http.ResponseWriter, r *http.Request) {
+	result, err := method10()
+	type _resultType struct {
+		Result string `json:"result"`
+	}
+	_resultValue := _resultType{Result: result}
+	_handleResult(w, err, _resultValue)
 }
 func _handler_method2(w http.ResponseWriter, r *http.Request) {
 	queryStringQuery := r.URL.Query().Get("queryString")
@@ -142,38 +138,35 @@ func _handler_method2(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_, err := method2(queryString, queryInt, queryFloat64, queryBool, queryBytes)
-	type resultType struct {
-		_baseResponse `json:",inline"`
-		Err           error `json:"err"`
+	type _resultType struct {
 	}
-	resultValue := resultType{_baseResponse: _baseResponse{Code: http.StatusOK, Msg: http.StatusText(http.StatusOK)}, Err: err}
-	_handleResult(w, err, resultValue)
+	_resultValue := _resultType{}
+	_handleResult(w, err, _resultValue)
 }
 func _handler_method3(w http.ResponseWriter, r *http.Request) {
-	body, bodyReadErr := io.ReadAll(r.Body)
-	if bodyReadErr != nil {
-		_handleBadRequest(w, bodyReadErr)
+	_body, _bodyReadErr := io.ReadAll(r.Body)
+	if _bodyReadErr != nil {
+		_handleBadRequest(w, _bodyReadErr)
 		return
 	}
-	type bodyType struct {
+	type _bodyType struct {
 		BodyString  string  `json:"bodyString"`
 		BodyInt     int     `json:"bodyInt"`
 		BodyFloat64 float64 `json:"bodyFloat64"`
 		BodyBool    bool    `json:"bodyBool"`
 		BodyBytes   []byte  `json:"bodyBytes"`
 	}
-	bodyValue, bodyValueUnmarshalErr := _unmarshalBytes[bodyType](body)
-	if bodyValueUnmarshalErr != nil {
-		_handleBadRequest(w, bodyValueUnmarshalErr)
+	_bodyValue, _bodyValueUnmarshalErr := _unmarshalBytes[_bodyType](_body)
+	if _bodyValueUnmarshalErr != nil {
+		_handleBadRequest(w, _bodyValueUnmarshalErr)
 		return
 	}
-	result, _ := method3(bodyValue.BodyString, bodyValue.BodyInt, bodyValue.BodyFloat64, bodyValue.BodyBool, bodyValue.BodyBytes)
-	type resultType struct {
-		_baseResponse `json:",inline"`
-		Result        string `json:"result"`
+	result, _ := method3(_bodyValue.BodyString, _bodyValue.BodyInt, _bodyValue.BodyFloat64, _bodyValue.BodyBool, _bodyValue.BodyBytes)
+	type _resultType struct {
+		Result string `json:"result"`
 	}
-	resultValue := resultType{_baseResponse: _baseResponse{Code: http.StatusOK, Msg: http.StatusText(http.StatusOK)}, Result: result}
-	_handleResult(w, nil, resultValue)
+	_resultValue := _resultType{Result: result}
+	_handleResult(w, nil, _resultValue)
 }
 func _handler_method4(w http.ResponseWriter, r *http.Request) {
 	pathStringPath := r.PathValue("pathString")
@@ -188,44 +181,40 @@ func _handler_method4(w http.ResponseWriter, r *http.Request) {
 		_handleBadRequest(w, queryStringUnmarshalErr)
 		return
 	}
-	body, bodyReadErr := io.ReadAll(r.Body)
-	if bodyReadErr != nil {
-		_handleBadRequest(w, bodyReadErr)
+	_body, _bodyReadErr := io.ReadAll(r.Body)
+	if _bodyReadErr != nil {
+		_handleBadRequest(w, _bodyReadErr)
 		return
 	}
-	bodyString, bodyStringUnmarshalErr := _unmarshalBytes[string](body)
+	bodyString, bodyStringUnmarshalErr := _unmarshalBytes[string](_body)
 	if bodyStringUnmarshalErr != nil {
 		_handleBadRequest(w, bodyStringUnmarshalErr)
 		return
 	}
 	res0, res1 := method4(pathString, queryString, bodyString)
-	type resultType struct {
-		_baseResponse `json:",inline"`
-		Res0          string `json:"res0"`
-		Res1          error  `json:"res1"`
+	type _resultType struct {
+		Res0 string `json:"res0"`
 	}
-	resultValue := resultType{_baseResponse: _baseResponse{Code: http.StatusOK, Msg: http.StatusText(http.StatusOK)}, Res0: res0, Res1: res1}
-	_handleResult(w, res1, resultValue)
+	_resultValue := _resultType{Res0: res0}
+	_handleResult(w, res1, _resultValue)
 }
 func _handler_method5(w http.ResponseWriter, r *http.Request) {
-	body, bodyReadErr := io.ReadAll(r.Body)
-	if bodyReadErr != nil {
-		_handleBadRequest(w, bodyReadErr)
+	_body, _bodyReadErr := io.ReadAll(r.Body)
+	if _bodyReadErr != nil {
+		_handleBadRequest(w, _bodyReadErr)
 		return
 	}
-	bodyMap, bodyMapUnmarshalErr := _unmarshalBytes[map[string][]map[string]int](body)
+	bodyMap, bodyMapUnmarshalErr := _unmarshalBytes[map[string][]map[string]int](_body)
 	if bodyMapUnmarshalErr != nil {
 		_handleBadRequest(w, bodyMapUnmarshalErr)
 		return
 	}
 	result, Error := method5(bodyMap)
-	type resultType struct {
-		_baseResponse `json:",inline"`
-		Result        string `json:"result"`
-		Error         error  `json:"Error"`
+	type _resultType struct {
+		Result string `json:"result"`
 	}
-	resultValue := resultType{_baseResponse: _baseResponse{Code: http.StatusOK, Msg: http.StatusText(http.StatusOK)}, Result: result, Error: Error}
-	_handleResult(w, Error, resultValue)
+	_resultValue := _resultType{Result: result}
+	_handleResult(w, Error, _resultValue)
 }
 func _handler_method6(w http.ResponseWriter, r *http.Request) {
 	field1Query := r.URL.Query().Get("field1")
@@ -259,69 +248,62 @@ func _handler_method6(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	code, err := method6(field1, field2, field3, field4, field5)
-	type resultType struct {
-		_baseResponse `json:",inline"`
-		Code          int   `json:"code"`
-		Err           error `json:"err"`
+	type _resultType struct {
+		Code int `json:"code"`
 	}
-	resultValue := resultType{_baseResponse: _baseResponse{Code: http.StatusOK, Msg: http.StatusText(http.StatusOK)}, Code: code, Err: err}
-	_handleResult(w, err, resultValue)
+	_resultValue := _resultType{Code: code}
+	_handleResult(w, err, _resultValue)
 }
 func _handler_method7(w http.ResponseWriter, r *http.Request) {
-	body, bodyReadErr := io.ReadAll(r.Body)
-	if bodyReadErr != nil {
-		_handleBadRequest(w, bodyReadErr)
+	_body, _bodyReadErr := io.ReadAll(r.Body)
+	if _bodyReadErr != nil {
+		_handleBadRequest(w, _bodyReadErr)
 		return
 	}
-	type bodyType struct {
+	type _bodyType struct {
 		BodyModel     ThisPackageModel                      `json:"bodyModel"`
 		BodyModelList []ThisPackageModel                    `json:"bodyModelList"`
 		BodyModelMap  map[string]models.AnotherPackageModel `json:"bodyModelMap"`
 	}
-	bodyValue, bodyValueUnmarshalErr := _unmarshalBytes[bodyType](body)
-	if bodyValueUnmarshalErr != nil {
-		_handleBadRequest(w, bodyValueUnmarshalErr)
+	_bodyValue, _bodyValueUnmarshalErr := _unmarshalBytes[_bodyType](_body)
+	if _bodyValueUnmarshalErr != nil {
+		_handleBadRequest(w, _bodyValueUnmarshalErr)
 		return
 	}
-	code, err := method7(bodyValue.BodyModel, bodyValue.BodyModelList, bodyValue.BodyModelMap)
-	type resultType struct {
-		_baseResponse `json:",inline"`
-		Code          int   `json:"code"`
-		Err           error `json:"err"`
+	code, err := method7(_bodyValue.BodyModel, _bodyValue.BodyModelList, _bodyValue.BodyModelMap)
+	type _resultType struct {
+		Code int `json:"code"`
 	}
-	resultValue := resultType{_baseResponse: _baseResponse{Code: http.StatusOK, Msg: http.StatusText(http.StatusOK)}, Code: code, Err: err}
-	_handleResult(w, err, resultValue)
+	_resultValue := _resultType{Code: code}
+	_handleResult(w, err, _resultValue)
 }
 func _handler_method8(w http.ResponseWriter, r *http.Request) {
 	result, err := method8()
-	type resultType struct {
-		_baseResponse `json:",inline"`
-		Result        string `json:"result"`
-		Err           error  `json:"err"`
+	type _resultType struct {
+		Result string `json:"result"`
 	}
-	resultValue := resultType{_baseResponse: _baseResponse{Code: http.StatusOK, Msg: http.StatusText(http.StatusOK)}, Result: result, Err: err}
-	_handleResult(w, err, resultValue)
+	_resultValue := _resultType{Result: result}
+	_handleResult(w, err, _resultValue)
 }
 func _handler_method9(w http.ResponseWriter, r *http.Request) {
 	result, err := method9()
-	type resultType struct {
-		_baseResponse `json:",inline"`
-		Result        string `json:"result"`
-		Err           error  `json:"err"`
+	type _resultType struct {
+		Result string `json:"result"`
 	}
-	resultValue := resultType{_baseResponse: _baseResponse{Code: http.StatusOK, Msg: http.StatusText(http.StatusOK)}, Result: result, Err: err}
-	_handleResult(w, err, resultValue)
+	_resultValue := _resultType{Result: result}
+	_handleResult(w, err, _resultValue)
 }
 func init() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("GET /path-to-method1", _handler_method1)
-	mux.HandleFunc("POST /path-to-method2", _handler_method2)
-	mux.HandleFunc("PUT /path-to-method3", _handler_method3)
-	mux.HandleFunc("DELETE /path-to-method4", _handler_method4)
-	mux.HandleFunc("OPTIONS /path-to-method5", _handler_method5)
-	mux.HandleFunc("HEAD /path-to-method6", _handler_method6)
-	mux.HandleFunc("PATCH /path-to-method7", _handler_method7)
-	mux.HandleFunc("GET /path-to-method8", _handler_method8)
-	mux.HandleFunc("GET /path-to-method9", _handler_method9)
-	s2aHandler = mux
+	_mux := http.NewServeMux()
+	_mux.HandleFunc("GET /path-to-method1", _handler_method1)
+	_mux.HandleFunc("GET /path-to-method10", _handler_method10)
+	_mux.HandleFunc("POST /path-to-method2", _handler_method2)
+	_mux.HandleFunc("PUT /path-to-method3", _handler_method3)
+	_mux.HandleFunc("DELETE /path-to-method4", _handler_method4)
+	_mux.HandleFunc("OPTIONS /path-to-method5", _handler_method5)
+	_mux.HandleFunc("HEAD /path-to-method6", _handler_method6)
+	_mux.HandleFunc("PATCH /path-to-method7", _handler_method7)
+	_mux.HandleFunc("GET /path-to-method8", _handler_method8)
+	_mux.HandleFunc("GET /path-to-method9", _handler_method9)
+	s2aHandler = _mux
 }

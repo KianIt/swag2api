@@ -24,7 +24,7 @@ import (
 //
 // Uses the built-in AST features to parse the functions.
 // Also parses the main package name, file imports,
-// HTTP handler information.
+// API HTTP handler information.
 type SourceParser struct {
 	fs          *token.FileSet
 	PkgName     string
@@ -75,7 +75,7 @@ func (p *SourceParser) parseFiles(pkgPath string) ([]*ast.File, error) {
 
 	if err := filepath.Walk(pkgPath, func(path string, info os.FileInfo, err error) error {
 		// Skipping not Golang source code files.
-		if !utils.IsGoSource(info) {
+		if info.IsDir() || !utils.IsGoSource(info.Name()) {
 			return nil
 		}
 
@@ -85,8 +85,14 @@ func (p *SourceParser) parseFiles(pkgPath string) ([]*ast.File, error) {
 			return fmt.Errorf("file '%s': %w", path, parseErr)
 		}
 
-		// If package path is root then it's a main package.
-		if p.PkgName == "" && path == filepath.Base(path) {
+		// File path relative to packagep path.
+		relPath, pathErr := filepath.Rel(pkgPath, path)
+		if parseErr != nil {
+			return fmt.Errorf("file '%s' rel path: %w", path, pathErr)
+		}
+
+		// If relative path is package root then it's a main package.
+		if p.PkgName == "" && relPath == filepath.Base(relPath) {
 			p.PkgName = file.Name.Name
 		}
 
@@ -137,7 +143,7 @@ func (p *SourceParser) Visit(node ast.Node) ast.Visitor {
 
 // checkHTTPHandler tries to update the HTTP handler information.
 func (p *SourceParser) checkHTTPHandler(decl *ast.GenDecl) {
-	if decl.Tok != token.VAR || decl == nil {
+	if decl == nil || decl.Tok != token.VAR {
 		return
 	}
 
@@ -155,7 +161,7 @@ func (p *SourceParser) checkHTTPHandler(decl *ast.GenDecl) {
 
 // parseImports tries to parse file imports.
 func (p *SourceParser) parseImports(decl *ast.GenDecl) {
-	if decl.Tok != token.IMPORT || decl == nil {
+	if decl == nil || decl.Tok != token.IMPORT {
 		return
 	}
 

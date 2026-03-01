@@ -44,7 +44,9 @@ func (fc *FileCompiler) AddDecl(decl models.Decl) {
 
 // Compile compiles a file.
 func (fc *FileCompiler) Compile() *ast.File {
-	fc.compileImports()
+	if len(fc.imports) > 0 {
+		fc.compileImports()
+	}
 
 	for _, decl := range fc.decls {
 		fc.compileDecl(decl)

@@ -224,11 +224,11 @@ func (b *Builder) addFuncHandler(f s2aModels.Function) {
 	)
 
 	bodyStmts = append(bodyStmts,
-		b.getFuncHandlerFuncCallStmts(f, isBodyStruct)...,
+		getFuncHandlerFuncCallStmts(f, isBodyStruct)...,
 	)
 
 	bodyStmts = append(bodyStmts,
-		b.getFuncHandlerResultStmts(f)...,
+		getFuncHandlerResultStmts(f)...,
 	)
 
 	b.fc.AddDecl(
@@ -274,13 +274,13 @@ func (b *Builder) getFuncHandlerParamStmts(f s2aModels.Function) (paramStmts ast
 				),
 			)
 
-			unmarshalStmt, unmarshalErrName := b.getFuncHandlerParamUnmarshalStmt(param.NameOrigin(), param.Name, param.TypeExpr, false)
+			unmarshalStmt, unmarshalErrName := getFuncHandlerParamUnmarshalStmt(param.NameOrigin(), param.Name, param.TypeExpr, false)
 			paramStmts = append(paramStmts,
 				unmarshalStmt,
 			)
 
 			paramStmts = append(paramStmts,
-				b.getHandleBadRequestStmt(unmarshalErrName),
+				getHandleBadRequestStmt(unmarshalErrName),
 			)
 		case s2aModels.Body:
 			bodyParams = append(bodyParams, param)
@@ -291,7 +291,7 @@ func (b *Builder) getFuncHandlerParamStmts(f s2aModels.Function) (paramStmts ast
 		return paramStmts, false
 	}
 
-	bodyParamStmts, isBodyStruct := b.getFuncHandlerBodyParamStmts(bodyParams)
+	bodyParamStmts, isBodyStruct := getFuncHandlerBodyParamStmts(bodyParams)
 	paramStmts = append(paramStmts,
 		bodyParamStmts...,
 	)
@@ -300,12 +300,12 @@ func (b *Builder) getFuncHandlerParamStmts(f s2aModels.Function) (paramStmts ast
 }
 
 // getFuncHandlerBodyParamStmts returns AST statements for body params processing.
-func (b *Builder) getFuncHandlerBodyParamStmts(params []s2aModels.Param) (paramStmts astm.Stmts, isStruct bool) {
+func getFuncHandlerBodyParamStmts(params []s2aModels.Param) (paramStmts astm.Stmts, isStruct bool) {
 	paramStmts = append(paramStmts,
 		astm.GetAssignDefineStmt(
 			astm.Exprs{models.BodyToken.AstExpr(), models.BodyReadErrToken.AstExpr()},
 			astm.Exprs{models.BodyGetToken.AstExpr()}),
-		b.getHandleBadRequestStmt(models.BodyReadErrToken.String()),
+		getHandleBadRequestStmt(models.BodyReadErrToken.String()),
 	)
 
 	var paramName, paramTypeExpr string
@@ -340,20 +340,20 @@ func (b *Builder) getFuncHandlerBodyParamStmts(params []s2aModels.Param) (paramS
 		isStruct = false
 	}
 
-	unmarshalStmt, unmarshalErrName := b.getFuncHandlerParamUnmarshalStmt(models.BodyToken.String(), paramName, paramTypeExpr, true)
+	unmarshalStmt, unmarshalErrName := getFuncHandlerParamUnmarshalStmt(models.BodyToken.String(), paramName, paramTypeExpr, true)
 	paramStmts = append(paramStmts,
 		unmarshalStmt,
 	)
 
 	paramStmts = append(paramStmts,
-		b.getHandleBadRequestStmt(unmarshalErrName),
+		getHandleBadRequestStmt(unmarshalErrName),
 	)
 
 	return paramStmts, isStruct
 }
 
 // getFuncHandlerParamUnmarshalStmt returns an AST statement for param unmarshalling.
-func (b *Builder) getFuncHandlerParamUnmarshalStmt(paramNameOrigin, paramName, typeExpr string, isBody bool) (astm.Stmt, string) {
+func getFuncHandlerParamUnmarshalStmt(paramNameOrigin, paramName, typeExpr string, isBody bool) (astm.Stmt, string) {
 	var caller string
 	if !isBody {
 		caller = templateModels.UnmarshalString
@@ -362,7 +362,7 @@ func (b *Builder) getFuncHandlerParamUnmarshalStmt(paramNameOrigin, paramName, t
 	}
 	callerExpr := astm.GetNameExpr(fmt.Sprintf("%s[%s]", caller, typeExpr))
 
-	errName := paramName + models.UnmarshalErrToken.String()
+	errName := paramName + models.UnmarshalErrSuffixToken.String()
 
 	return astm.GetAssignDefineStmt(
 		astm.Exprs{
@@ -379,7 +379,7 @@ func (b *Builder) getFuncHandlerParamUnmarshalStmt(paramNameOrigin, paramName, t
 }
 
 // getFuncHandlerFuncCallStmts returns AST statements for function calling.
-func (b *Builder) getFuncHandlerFuncCallStmts(f s2aModels.Function, isBodyStruct bool) (stmts astm.Stmts) {
+func getFuncHandlerFuncCallStmts(f s2aModels.Function, isBodyStruct bool) (stmts astm.Stmts) {
 	resultExprs := make(astm.Exprs, 0, len(f.Results))
 	for _, result := range f.Results {
 		resultExprs = append(resultExprs, astm.GetNameExpr(result.Name))
@@ -409,31 +409,9 @@ func (b *Builder) getFuncHandlerFuncCallStmts(f s2aModels.Function, isBodyStruct
 }
 
 // getFuncHandlerResultStmts returns AST statements for function results processing.
-func (b *Builder) getFuncHandlerResultStmts(f s2aModels.Function) (stmts astm.Stmts) {
+func getFuncHandlerResultStmts(f s2aModels.Function) (stmts astm.Stmts) {
 	fields := make([]astm.Field, 0, len(f.Results)+1)
-	fields = append(
-		fields,
-		astm.GetField(
-			"",
-			templateModels.BaseResponse,
-			models.InlineFieldToken.String(),
-		),
-	)
-
 	elements := make(astm.Exprs, 0, len(f.Results)+1)
-	elements = append(
-		elements,
-		astm.GetKeyValueExpr(
-			astm.GetNameExpr(templateModels.BaseResponse),
-			astm.GetStructLitExpr(
-				templateModels.BaseResponse,
-				astm.Exprs{
-					astm.GetKeyValueExpr(models.CodeToken.AstExpr(), models.StatusOkToken.AstExpr()),
-					astm.GetKeyValueExpr(models.MsgToken.AstExpr(), models.StatusOkTextToken.AstExpr()),
-				},
-			),
-		),
-	)
 
 	resultErrExists := false
 	resultErrName := ""
@@ -442,9 +420,10 @@ func (b *Builder) getFuncHandlerResultStmts(f s2aModels.Function) (stmts astm.St
 			continue
 		}
 
-		if result.TypeExpr == "error" {
+		if result.IsError() {
 			resultErrExists = true
 			resultErrName = result.Name
+			continue
 		}
 
 		fields = append(
@@ -485,12 +464,12 @@ func (b *Builder) getFuncHandlerResultStmts(f s2aModels.Function) (stmts astm.St
 	if resultErrExists {
 		stmts = append(
 			stmts,
-			b.getHandleResultStmt(resultErrName),
+			getHandleResultStmt(resultErrName),
 		)
 	} else {
 		stmts = append(
 			stmts,
-			b.getHandleResultStmt(models.NilToken.String()),
+			getHandleResultStmt(models.NilToken.String()),
 		)
 	}
 
@@ -498,7 +477,7 @@ func (b *Builder) getFuncHandlerResultStmts(f s2aModels.Function) (stmts astm.St
 }
 
 // getHandleResultStmt returns an AST statement for handing bad request.
-func (b *Builder) getHandleBadRequestStmt(errName string) astm.Stmt {
+func getHandleBadRequestStmt(errName string) astm.Stmt {
 	var errExpr = astm.GetNameExpr(errName)
 
 	return astm.GetIfStmt(
@@ -516,15 +495,13 @@ func (b *Builder) getHandleBadRequestStmt(errName string) astm.Stmt {
 }
 
 // getHandleResultStmt returns an AST statement for handing function results.
-func (b *Builder) getHandleResultStmt(errName string) astm.Stmt {
-	var errExpr = astm.GetNameExpr(errName)
-
+func getHandleResultStmt(errName string) astm.Stmt {
 	return astm.GetExprStmt(
 		astm.GetCallExpr(
 			astm.GetNameExpr(templateModels.HandleResult),
 			astm.Exprs{
 				models.WToken.AstExpr(),
-				errExpr,
+				astm.GetNameExpr(errName),
 				models.ResultValueToken.AstExpr(),
 			},
 		),

@@ -3,7 +3,7 @@ package models
 import "github.com/KianIt/swag2api/utils"
 
 const (
-	BaseResponse     = "_baseResponse"
+	ErrorResponse    = "_errorResponse"
 	UnmarshalString  = "_unmarshalString"
 	UnmarshalBytes   = "_unmarshalBytes"
 	HandleBadRequest = "_handleBadRequest"
@@ -13,7 +13,7 @@ const (
 
 // TemplateNames is a list of all templates.
 var TemplateNames = []string{
-	BaseResponse,
+	ErrorResponse,
 	UnmarshalString,
 	UnmarshalBytes,
 	HandleBadRequest,

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"net/http"
 
-	s2aErrors "github.com/KianIt/swag2api/errors"
 	"github.com/KianIt/swag2api/example/models"
+	s2aStatuses "github.com/KianIt/swag2api/statuses"
 )
 
 type ThisPackageModel struct {
@@ -92,12 +92,19 @@ func method7(bodyModel ThisPackageModel, bodyModelList []ThisPackageModel, bodyM
 // @ID method8
 // @Router /path-to-method8 [get]
 func method8() (result string, err error) {
-	return "success", s2aErrors.NotFound(nil)
+	return "success", s2aStatuses.NotFoundError(nil)
 }
 
 // method9 godoc
 // @ID method9
 // @Router /path-to-method9 [get]
 func method9() (result string, err error) {
-	return "failed", s2aErrors.NotFound(errors.New("test error"))
+	return "failed", s2aStatuses.NotFoundError(errors.New("test error"))
+}
+
+// method10 godoc
+// @ID method10
+// @Router /path-to-method10 [get]
+func method10() (result string, err error) {
+	return "failed", s2aStatuses.NotFoundError(errors.New("test error"))
 }

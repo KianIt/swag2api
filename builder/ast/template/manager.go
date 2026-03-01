@@ -67,7 +67,7 @@ func (m *Manager) parseFiles(dirPath string) ([]*ast.File, error) {
 	files := make([]*ast.File, 0)
 
 	if err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
-		if !utils.IsGoSource(info) {
+		if info.IsDir() || !utils.IsGoSource(info.Name()) {
 			return nil
 		}
 

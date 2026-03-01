@@ -1,6 +1,8 @@
 package templates
 
-import "net/http"
+import (
+	"net/http"
+)
 
 func _handleResult(w http.ResponseWriter, err error, response any) {
 	if err != nil {
@@ -9,17 +11,17 @@ func _handleResult(w http.ResponseWriter, err error, response any) {
 			Unwrap() error
 		}); ok {
 			if e := cu.Unwrap(); e != nil {
-				_writeResponse(w, cu.Code(), _baseResponse{Code: cu.Code(), Msg: e.Error()})
-				return
+				_writeResponse(w, cu.Code(), _errorResponse{Error: e.Error()})
+			} else if response == nil {
+				_writeResponse(w, cu.Code(), _errorResponse{Error: http.StatusText(cu.Code())})
 			} else {
 				_writeResponse(w, cu.Code(), response)
-				return
 			}
+			return
 		} else {
-			_writeResponse(w, http.StatusInternalServerError, _baseResponse{Code: http.StatusInternalServerError, Msg: err.Error()})
+			_writeResponse(w, http.StatusInternalServerError, _errorResponse{Error: err.Error()})
 			return
 		}
 	}
-
 	_writeResponse(w, http.StatusOK, response)
 }

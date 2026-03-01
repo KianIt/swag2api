@@ -14,10 +14,9 @@ func _handleBadRequest(w http.ResponseWriter, err error) {
 		msg = err.Error()
 	}
 
-	response := _baseResponse{
-		Code: code,
-		Msg:  msg,
+	response := _errorResponse{
+		Error: msg,
 	}
 
-	_writeResponse(w, response.Code, response)
+	_writeResponse(w, code, response)
 }

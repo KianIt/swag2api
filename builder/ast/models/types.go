@@ -17,8 +17,11 @@ type (
 
 // Ast returns Fields as []*ast.Field.
 func (fs Fields) Ast() []*ast.Field {
-	astFs := make([]*ast.Field, 0, len(fs))
+	if len(fs) == 0 {
+		return nil
+	}
 
+	astFs := make([]*ast.Field, 0, len(fs))
 	for _, f := range fs {
 		astFs = append(astFs, f)
 	}
@@ -28,8 +31,11 @@ func (fs Fields) Ast() []*ast.Field {
 
 // Ast returns Exprs as []ast.Expr.
 func (es Exprs) Ast() []ast.Expr {
-	astEs := make([]ast.Expr, 0, len(es))
+	if len(es) == 0 {
+		return nil
+	}
 
+	astEs := make([]ast.Expr, 0, len(es))
 	for _, e := range es {
 		astEs = append(astEs, e)
 	}
@@ -39,8 +45,11 @@ func (es Exprs) Ast() []ast.Expr {
 
 // Ast returns Stmts as []ast.Stmt.
 func (ss Stmts) Ast() []ast.Stmt {
-	astSs := make([]ast.Stmt, 0, len(ss))
+	if len(ss) == 0 {
+		return nil
+	}
 
+	astSs := make([]ast.Stmt, 0, len(ss))
 	for _, e := range ss {
 		astSs = append(astSs, e)
 	}

@@ -19,7 +19,10 @@ func (f Field) IsError() bool {
 
 // NameCapitalized returns the field's name with the first letter uppercased.
 func (f Field) NameCapitalized() string {
-	return string(unicode.ToTitle(rune(f.Name[0]))) + f.Name[1:]
+	if len(f.Name) > 0 {
+		return string(unicode.ToTitle(rune(f.Name[0]))) + f.Name[1:]
+	}
+	return ""
 }
 
 // JSONTag returns the field's JSON tag.

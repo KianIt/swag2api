@@ -261,11 +261,17 @@ func getSchemaParamType(schema *spec.Schema) (s2aModels.ParamType, error) {
 		paramType = subType.SliceOf()
 	case swag.OBJECT:
 		// Object is a map.
+		var (
+			subType s2aModels.ParamType
+			err     error
+		)
 
 		// Trying to get the value type.
-		subType, err := getSchemaParamType(schema.AdditionalProperties.Schema)
-		if err != nil {
-			return "", err
+		if schema.AdditionalProperties != nil {
+			subType, err = getSchemaParamType(schema.AdditionalProperties.Schema)
+			if err != nil {
+				return "", err
+			}
 		}
 
 		// Returning a map.
