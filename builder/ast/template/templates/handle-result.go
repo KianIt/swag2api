@@ -22,5 +22,4 @@ func _handleResult(w http.ResponseWriter, err error, response any) {
 	}
 
 	_writeResponse(w, http.StatusOK, response)
-	return
 }

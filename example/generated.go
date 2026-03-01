@@ -63,9 +63,7 @@ func _handleResult(w http.ResponseWriter, err error, response any) {
 			return
 		}
 	}
-	
 	_writeResponse(w, http.StatusOK, response)
-	return
 }
 func _writeResponse(w http.ResponseWriter, code int, response any) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
