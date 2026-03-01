@@ -20,12 +20,12 @@ import (
 	"github.com/KianIt/swag2api/utils"
 )
 
-// SourceParser is a source code parser.
+// Parser is a source code parser.
 //
 // Uses the built-in AST features to parse the functions.
 // Also parses the main package name, file imports,
 // API HTTP handler information.
-type SourceParser struct {
+type Parser struct {
 	fs          *token.FileSet
 	PkgName     string
 	Imports     []s2aModels.Import
@@ -34,8 +34,8 @@ type SourceParser struct {
 }
 
 // NewSourceParser returns a new source code parser.
-func NewSourceParser() *SourceParser {
-	return &SourceParser{
+func NewSourceParser() *Parser {
+	return &Parser{
 		fs:      token.NewFileSet(),
 		Imports: make([]s2aModels.Import, 0),
 		Funcs:   make(s2aModels.Functions, 0),
@@ -46,7 +46,7 @@ func NewSourceParser() *SourceParser {
 //
 // Walks over every file in the package (and subpackages)
 // and reads definitions of all the visited functions.
-func (p *SourceParser) Parse(pkgPath, handlerName string) error {
+func (p *Parser) Parse(pkgPath, handlerName string) error {
 	log.Printf("Parsing source code from '%s'", pkgPath)
 
 	p.HTTPHandler.Name = handlerName
@@ -70,10 +70,10 @@ func (p *SourceParser) Parse(pkgPath, handlerName string) error {
 }
 
 // parseFiles parses the source code package and returns a list of files.
-func (p *SourceParser) parseFiles(pkgPath string) ([]*ast.File, error) {
+func (p *Parser) parseFiles(pkgPath string) ([]*ast.File, error) {
 	files := make([]*ast.File, 0)
 
-	if err := filepath.Walk(pkgPath, func(path string, info os.FileInfo, err error) error {
+	if err := filepath.Walk(pkgPath, func(path string, info os.FileInfo, _ error) error {
 		// Skipping not Golang source code files.
 		if info.IsDir() || !utils.IsGoSource(info.Name()) {
 			return nil
@@ -87,7 +87,7 @@ func (p *SourceParser) parseFiles(pkgPath string) ([]*ast.File, error) {
 
 		// File path relative to packagep path.
 		relPath, pathErr := filepath.Rel(pkgPath, path)
-		if parseErr != nil {
+		if pathErr != nil {
 			return fmt.Errorf("file '%s' rel path: %w", path, pathErr)
 		}
 
@@ -106,10 +106,10 @@ func (p *SourceParser) parseFiles(pkgPath string) ([]*ast.File, error) {
 	return files, nil
 }
 
-// Visit implements the ast.Visitor interface.
+// Visit implements the [ast.Visitor] interface.
 //
 // Allows the SourceParser to walk over nodes in a parsed file.
-func (p *SourceParser) Visit(node ast.Node) ast.Visitor {
+func (p *Parser) Visit(node ast.Node) ast.Visitor {
 	if node == nil {
 		return nil
 	}
@@ -142,7 +142,7 @@ func (p *SourceParser) Visit(node ast.Node) ast.Visitor {
 }
 
 // checkHTTPHandler tries to update the HTTP handler information.
-func (p *SourceParser) checkHTTPHandler(decl *ast.GenDecl) {
+func (p *Parser) checkHTTPHandler(decl *ast.GenDecl) {
 	if decl == nil || decl.Tok != token.VAR {
 		return
 	}
@@ -160,7 +160,7 @@ func (p *SourceParser) checkHTTPHandler(decl *ast.GenDecl) {
 }
 
 // parseImports tries to parse file imports.
-func (p *SourceParser) parseImports(decl *ast.GenDecl) {
+func (p *Parser) parseImports(decl *ast.GenDecl) {
 	if decl == nil || decl.Tok != token.IMPORT {
 		return
 	}
@@ -187,7 +187,7 @@ func (p *SourceParser) parseImports(decl *ast.GenDecl) {
 }
 
 // parseFuncDecl parsees a function declaration.
-func (p *SourceParser) parseFuncDecl(decl *ast.FuncDecl) error {
+func (p *Parser) parseFuncDecl(decl *ast.FuncDecl) error {
 	if decl == nil {
 		return errors.New("declaration is nil")
 	}
@@ -215,8 +215,8 @@ func (p *SourceParser) parseFuncDecl(decl *ast.FuncDecl) error {
 	return nil
 }
 
-// fieldList2Params converts an *ast.FieldList into a s2aModels.Params.
-func (p *SourceParser) fieldList2Params(fieldList *ast.FieldList) (s2aModels.Params, error) {
+// fieldList2Params converts an *[ast.FieldList] into a [s2aModels.Params].
+func (p *Parser) fieldList2Params(fieldList *ast.FieldList) (s2aModels.Params, error) {
 	if fieldList == nil {
 		return make(s2aModels.Params, 0), nil
 	}
@@ -234,8 +234,8 @@ func (p *SourceParser) fieldList2Params(fieldList *ast.FieldList) (s2aModels.Par
 	return params, nil
 }
 
-// field2Params converts an *ast.Field into a s2aModels.Params.
-func (p *SourceParser) field2Params(field *ast.Field) (s2aModels.Params, error) {
+// field2Params converts an *[ast.Field] into a [s2aModels.Params].
+func (p *Parser) field2Params(field *ast.Field) (s2aModels.Params, error) {
 	if field == nil {
 		return make(s2aModels.Params, 0), nil
 	}
@@ -259,8 +259,8 @@ func (p *SourceParser) field2Params(field *ast.Field) (s2aModels.Params, error) 
 	return params, nil
 }
 
-// fieldList2Results converts an*ast.FieldList into a s2aModels.Results.
-func (p *SourceParser) fieldList2Results(fieldList *ast.FieldList) (s2aModels.Results, error) {
+// fieldList2Results converts an *[ast.FieldList] into a [s2aModels.Results].
+func (p *Parser) fieldList2Results(fieldList *ast.FieldList) (s2aModels.Results, error) {
 	if fieldList == nil {
 		return make(s2aModels.Results, 0), nil
 	}
@@ -280,10 +280,10 @@ func (p *SourceParser) fieldList2Results(fieldList *ast.FieldList) (s2aModels.Re
 	return results, nil
 }
 
-// field2Results converts an *ast.Field into a s2aModels.Results
+// field2Results converts an *[ast.Field] into a s2aModels.Results
 //
 // Gives a default name to the unnamed results.
-func (p *SourceParser) field2Results(field *ast.Field, idx int) (s2aModels.Results, error) {
+func (p *Parser) field2Results(field *ast.Field, idx int) (s2aModels.Results, error) {
 	if field == nil {
 		return make(s2aModels.Results, 0), nil
 	}
@@ -307,8 +307,8 @@ func (p *SourceParser) field2Results(field *ast.Field, idx int) (s2aModels.Resul
 	return results, nil
 }
 
-// getType parses a type expression and a s2aModels.ParamType from an ast.Expr.
-func (p *SourceParser) getType(expr ast.Expr) (string, s2aModels.ParamType, error) {
+// getType parses a type expression and a [s2aModels.ParamType] from an [ast.Expr].
+func (p *Parser) getType(expr ast.Expr) (string, s2aModels.ParamType, error) {
 	var buf bytes.Buffer
 
 	if err := printer.Fprint(&buf, token.NewFileSet(), expr); err != nil {
@@ -325,8 +325,8 @@ func (p *SourceParser) getType(expr ast.Expr) (string, s2aModels.ParamType, erro
 	return typeExpr, paramType, nil
 }
 
-// getParamType parses a s2aModels.ParamType from a type expression.
-func (p *SourceParser) getParamType(typeExpr string) (s2aModels.ParamType, error) {
+// getParamType parses a [s2aModels.ParamType] from a type expression.
+func (p *Parser) getParamType(typeExpr string) (s2aModels.ParamType, error) {
 	var paramType s2aModels.ParamType
 
 	// Trying to parse a simple type.
@@ -363,14 +363,14 @@ func (p *SourceParser) getParamType(typeExpr string) (s2aModels.ParamType, error
 
 	// Prefix map[ means a slice.
 	if strings.HasPrefix(typeExpr, "map[") {
-		idx := strings.Index(typeExpr, "]")
+		_, after, found := strings.Cut(typeExpr, "]")
 
-		if idx < 0 {
+		if !found {
 			return "", fmt.Errorf("invalid map type: '%s'", typeExpr)
 		}
 
 		// Trying to parse the map value type.
-		subType, err := p.getParamType(typeExpr[idx+1:])
+		subType, err := p.getParamType(after)
 		if err != nil {
 			return "", err
 		}

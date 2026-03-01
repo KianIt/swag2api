@@ -1,4 +1,4 @@
-package errors
+package statuses
 
 import (
 	"errors"
@@ -7,24 +7,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestStatusCodeErrorWrapping_Code(t *testing.T) {
-	wr := statusCodeErrorWrapping{
+func TestStatusCodeWrappingError_Code(t *testing.T) {
+	wr := statusCodeWrappingError{
 		sc:  statusOK,
 		err: errors.New("test"),
 	}
 	assert.Equal(t, int(statusOK), wr.Code())
 }
 
-func TestStatusCodeErrorWrapping_Unwrap(t *testing.T) {
-	wr := statusCodeErrorWrapping{
+func TestStatusCodeWrappingError_Unwrap(t *testing.T) {
+	wr := statusCodeWrappingError{
 		sc:  statusOK,
 		err: errors.New("test"),
 	}
 	assert.Equal(t, errors.New("test"), wr.Unwrap())
 }
 
-func TestStatusCodeErrorWrapping_Error(t *testing.T) {
-	wr := statusCodeErrorWrapping{
+func TestStatusCodeWrappingError_Error(t *testing.T) {
+	wr := statusCodeWrappingError{
 		sc:  statusOK,
 		err: errors.New("test"),
 	}
@@ -103,7 +103,7 @@ func TestStstusCodeErrorWrapper(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			assert.Equal(t, tc.sc, tc.wrapper(nil).(*statusCodeErrorWrapping).sc)
+			assert.Equal(t, tc.sc, tc.wrapper(nil).(*statusCodeWrappingError).sc) //nolint:errorlint // Need to assret error type.
 		})
 	}
 }

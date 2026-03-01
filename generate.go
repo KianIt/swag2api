@@ -6,7 +6,7 @@ import (
 	"path"
 
 	"github.com/KianIt/swag2api/builder"
-	"github.com/KianIt/swag2api/parser"
+	parserwrapper "github.com/KianIt/swag2api/parser/parser-wrapper"
 	"github.com/KianIt/swag2api/validator"
 )
 
@@ -54,7 +54,7 @@ func Generate(pkgPath, mainFile, apiFile, handlerName string) error {
 		return fmt.Errorf("API file: %w", err)
 	}
 
-	p := parser.NewParser()
+	p := parserwrapper.NewParserWrapper()
 	if err := p.Parse(pkgPath, mainFile, handlerName); err != nil {
 		return fmt.Errorf("parsing: %w", err)
 	}

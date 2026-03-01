@@ -1,4 +1,4 @@
-package parser
+package parserwrapper
 
 import (
 	"fmt"
@@ -10,19 +10,19 @@ import (
 	"github.com/KianIt/swag2api/parser/source"
 )
 
-// Parser is a wrapper for the swag annotations and source code parsers.
+// ParserWrapepr is a wrapper for the swag annotations and source code parsers.
 //
 // It uses the both parsers to read the complete information about
 // the annotated functions and the future API.
-type Parser struct {
-	annot  *annot.AnnotParser
-	source *source.SourceParser
+type ParserWrapepr struct {
+	annot  *annot.Parser
+	source *source.Parser
 	info   models.ParsingInfo
 }
 
-// NewParser returns a new Parser.
-func NewParser() *Parser {
-	return &Parser{
+// NewParserWrapper returns a new Parser.
+func NewParserWrapper() *ParserWrapepr {
+	return &ParserWrapepr{
 		annot:  annot.NewAnnotParser(),
 		source: source.NewSourceParser(),
 	}
@@ -32,7 +32,7 @@ func NewParser() *Parser {
 //
 // Runs the swag annotations and source code parsers and
 // joins their results into the complete parsing information.
-func (p *Parser) Parse(pkgPath, mainFname, handlerName string) error {
+func (p *ParserWrapepr) Parse(pkgPath, mainFname, handlerName string) error {
 	log.Printf("Parsing started")
 
 	if err := p.annot.Parse(pkgPath, mainFname); err != nil {
@@ -59,13 +59,13 @@ func (p *Parser) Parse(pkgPath, mainFname, handlerName string) error {
 }
 
 // GetInfo returns the complete parsing information.
-func (p *Parser) GetInfo() models.ParsingInfo {
+func (p *ParserWrapepr) GetInfo() models.ParsingInfo {
 	return p.info
 }
 
 // combineFuncs combines functions from the swag annotations and source code parsers.
-func (p *Parser) combineFuncs() (combinedFuncs s2aModels.Functions, err error) {
-	combinedFuncs = make(s2aModels.Functions, 0, len(p.source.Funcs))
+func (p *ParserWrapepr) combineFuncs() (s2aModels.Functions, error) {
+	combinedFuncs := make(s2aModels.Functions, 0, len(p.source.Funcs))
 
 	annotFuncMap := p.annot.Funcs.Map()
 	sourceFuncMap := p.source.Funcs.Map()
@@ -90,12 +90,12 @@ func (p *Parser) combineFuncs() (combinedFuncs s2aModels.Functions, err error) {
 		}
 	}
 
-	return
+	return combinedFuncs, nil
 }
 
 // combineFuncs combines function params from the swag annotations and source code parsers.
-func combineParams(funcName string, annotParams, sourceParams s2aModels.Params) (combinedParams s2aModels.Params, err error) {
-	combinedParams = make(s2aModels.Params, 0, len(sourceParams))
+func combineParams(funcName string, annotParams, sourceParams s2aModels.Params) (s2aModels.Params, error) {
+	combinedParams := make(s2aModels.Params, 0, len(sourceParams))
 
 	annotParamMap := annotParams.Map()
 	sourceParamMap := sourceParams.Map()
@@ -107,15 +107,16 @@ func combineParams(funcName string, annotParams, sourceParams s2aModels.Params) 
 	}
 
 	for _, sourceParam := range sourceParams {
-		if annotParam, ok := annotParamMap[sourceParam.Name]; !ok {
+		annotParam, ok := annotParamMap[sourceParam.Name]
+		if !ok {
 			return nil, fmt.Errorf("param '%s' found in source code and not found in annotations", sourceParam.Name)
 		} else if !sourceParam.Type.Is(annotParam.Type) {
 			return nil, fmt.Errorf("param '%s' source code type '%s' isn`t equal to annotation type '%s'", sourceParam.Name, sourceParam.Type, annotParam.Type)
-		} else {
-			sourceParam.Origin = annotParam.Origin
-			combinedParams = append(combinedParams, sourceParam)
 		}
+
+		sourceParam.Origin = annotParam.Origin
+		combinedParams = append(combinedParams, sourceParam)
 	}
 
-	return
+	return combinedParams, nil
 }

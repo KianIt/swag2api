@@ -18,6 +18,12 @@ import (
 // @title swag2api example documntation
 // @version 1.0
 
+const (
+	shutdownTimeout = 10 * time.Second
+	readTimeout     = 5 * time.Second
+	WriteTimeout    = 10 * time.Second
+)
+
 var s2aHandler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusNotImplemented)
@@ -27,15 +33,17 @@ var s2aHandler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *ht
 func main() {
 	server := createServer(":8080")
 
-	if err := runServer(context.Background(), server, 10*time.Second); err != nil {
+	if err := runServer(context.Background(), server, shutdownTimeout); err != nil {
 		log.Fatalf("Server error: %v", err)
 	}
 }
 
 func createServer(port string) *http.Server {
 	return &http.Server{
-		Addr:    port,
-		Handler: loggingMiddleware(s2aHandler),
+		Addr:         port,
+		ReadTimeout:  readTimeout,
+		WriteTimeout: WriteTimeout,
+		Handler:      loggingMiddleware(s2aHandler),
 	}
 }
 

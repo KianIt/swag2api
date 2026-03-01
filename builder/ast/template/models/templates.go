@@ -1,6 +1,8 @@
 package models
 
-import "github.com/KianIt/swag2api/utils"
+import (
+	"slices"
+)
 
 const (
 	ErrorResponse    = "_errorResponse"
@@ -23,5 +25,5 @@ var TemplateNames = []string{
 
 // IsExistingTemplate checks if a template with a given name exists.
 func IsExistingTemplate(name string) bool {
-	return utils.Contains(TemplateNames, name)
+	return slices.Contains(TemplateNames, name)
 }

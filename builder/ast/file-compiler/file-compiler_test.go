@@ -1,4 +1,4 @@
-package ast
+package filecompiler
 
 import (
 	"go/ast"

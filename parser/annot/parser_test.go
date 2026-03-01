@@ -264,7 +264,7 @@ func TestParameters2Param(t *testing.T) {
 		},
 	}
 	params, err := parameters2Params(parameters)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	assert.Equal(
 		t,
@@ -308,7 +308,7 @@ func TestAnnotParser_parseMethod(t *testing.T) {
 				}},
 			},
 		})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(
 			t,
 			models.Functions{
@@ -365,7 +365,7 @@ func TestAnnotParser_parsePath(t *testing.T) {
 				},
 			},
 		})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(
 			t,
 			models.Functions{
@@ -420,7 +420,7 @@ func TestAnnotParser_Parse(t *testing.T) {
 			if tc.isErr {
 				assert.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.Equal(
 					t,
 					models.Functions{

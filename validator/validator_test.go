@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/go-openapi/testify/v2/require"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,7 +36,7 @@ func TestValidatePkg(t *testing.T) {
 			err := ValidatePkg(tc.pkgPath)
 
 			if tc.err == nil {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			} else {
 				assert.ErrorIs(t, err, tc.err)
 			}
@@ -71,7 +72,7 @@ func TestValidateMainFile(t *testing.T) {
 			err := ValidateMainFile(tc.mainPath)
 
 			if tc.err == nil {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			} else {
 				assert.ErrorIs(t, err, tc.err)
 			}
@@ -110,7 +111,7 @@ func TestValidateAPIFile(t *testing.T) {
 			err := ValidateAPIFile(tc.apiPath)
 
 			if tc.err == nil {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			} else {
 				assert.ErrorIs(t, err, tc.err)
 			}

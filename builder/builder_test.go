@@ -13,6 +13,7 @@ import (
 	"github.com/KianIt/swag2api/builder/models"
 	s2aModels "github.com/KianIt/swag2api/models"
 	parserModels "github.com/KianIt/swag2api/parser/models"
+	"github.com/go-openapi/testify/v2/require"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -486,7 +487,7 @@ func TestGetFuncHandlerBodyParamStmts(t *testing.T) {
 			},
 			stmts,
 		)
-		assert.Equal(t, isStruct, false)
+		assert.False(t, isStruct)
 	})
 
 	t.Run("two params", func(t *testing.T) {
@@ -618,7 +619,7 @@ func TestGetFuncHandlerBodyParamStmts(t *testing.T) {
 			},
 			stmts,
 		)
-		assert.Equal(t, isStruct, true)
+		assert.True(t, isStruct)
 	})
 }
 
@@ -745,7 +746,7 @@ func TestBuilder_addTemplates(t *testing.T) {
 	builder.addTemplates()
 
 	file := builder.fc.Compile()
-	assert.Equal(t, len(templateModels.TemplateNames), len(file.Decls))
+	assert.Len(t, file.Decls, len(templateModels.TemplateNames))
 }
 
 func TestBuilder_addInit(t *testing.T) {
@@ -894,7 +895,7 @@ func TestBuilder_getFuncHandlerParamStmts(t *testing.T) {
 			},
 			stmts,
 		)
-		assert.Equal(t, false, isBodyStruct)
+		assert.False(t, isBodyStruct)
 	})
 
 	t.Run("one body param", func(t *testing.T) {
@@ -992,7 +993,7 @@ func TestBuilder_getFuncHandlerParamStmts(t *testing.T) {
 			},
 			stmts,
 		)
-		assert.Equal(t, false, isBodyStruct)
+		assert.False(t, isBodyStruct)
 	})
 
 	t.Run("multiple body params", func(t *testing.T) {
@@ -1130,15 +1131,15 @@ func TestBuilder_getFuncHandlerParamStmts(t *testing.T) {
 			},
 			stmts,
 		)
-		assert.Equal(t, true, isBodyStruct)
+		assert.True(t, isBodyStruct)
 	})
 }
 
 func TestBuilder_Build(t *testing.T) {
 	_, _ = os.Create("./testdata/generated_actual.go")
-	defer func() {
-		_ = os.Remove("./testdata/generated_actual.go")
-	}()
+	// defer func() {
+	// 	_ = os.Remove("./testdata/generated_actual.go")
+	// }()
 
 	builder := NewBuilder(parserModels.ParsingInfo{
 		PkgName: "testdata",
@@ -1259,7 +1260,7 @@ func TestBuilder_Build(t *testing.T) {
 		},
 	})
 
-	assert.NoError(t, builder.Build("./testdata/generated_actual.go"))
+	require.NoError(t, builder.Build("./testdata/generated_actual.go"))
 
 	expectedData, _ := os.ReadFile("./testdata/generated_expected.go")
 	actualData, _ := os.ReadFile("./testdata/generated_actual.go")

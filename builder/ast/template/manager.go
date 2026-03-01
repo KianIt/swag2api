@@ -1,4 +1,4 @@
-package template
+package asttemplate
 
 import (
 	"errors"
@@ -66,7 +66,7 @@ func (m *Manager) Load() error {
 func (m *Manager) parseFiles(dirPath string) ([]*ast.File, error) {
 	files := make([]*ast.File, 0)
 
-	if err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
+	if err := filepath.Walk(dirPath, func(path string, info os.FileInfo, _ error) error {
 		if info.IsDir() || !utils.IsGoSource(info.Name()) {
 			return nil
 		}
@@ -86,7 +86,7 @@ func (m *Manager) parseFiles(dirPath string) ([]*ast.File, error) {
 	return files, nil
 }
 
-// Visit implements the ast.Visitor interface.
+// Visit implements the [ast.Visitor] interface.
 //
 // Allows the Manager to walk over nodes in a parsed file.
 func (m *Manager) Visit(node ast.Node) ast.Visitor {
@@ -138,7 +138,7 @@ func (m *Manager) GetTemplates() ([]astModels.Decl, error) {
 func getTemplatesAbsPath() (string, error) {
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
-		return "", fmt.Errorf("can't get caller")
+		return "", errors.New("can't get caller")
 	}
 
 	return filepath.Join(filepath.Dir(filename), templatesRelativePath), nil

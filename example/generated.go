@@ -18,7 +18,7 @@ func _unmarshalString[T any](value string) (buf T, err error) {
 	return _unmarshalBytes[T]([]byte(value))
 }
 func _unmarshalBytes[T any](value []byte) (buf T, err error) {
-	if err := json.Unmarshal(value, &buf); err != nil {
+	if err = json.Unmarshal(value, &buf); err != nil {
 		return buf, fmt.Errorf("unmarshal: %w", err)
 	}
 	return buf, nil
@@ -35,25 +35,24 @@ func _handleBadRequest(w http.ResponseWriter, err error) {
 	_writeResponse(w, code, response)
 }
 func _handleResult(w http.ResponseWriter, err error, response any) {
-	if err != nil {
-		if cu, ok := err.(interface {
-			Code() int
-			Unwrap() error
-		}); ok {
-			if e := cu.Unwrap(); e != nil {
-				_writeResponse(w, cu.Code(), _errorResponse{Error: e.Error()})
-			} else if response == nil {
-				_writeResponse(w, cu.Code(), _errorResponse{Error: http.StatusText(cu.Code())})
-			} else {
-				_writeResponse(w, cu.Code(), response)
-			}
-			return
-		} else {
-			_writeResponse(w, http.StatusInternalServerError, _errorResponse{Error: err.Error()})
-			return
-		}
+	if err == nil {
+		_writeResponse(w, http.StatusOK, response)
+		return
 	}
-	_writeResponse(w, http.StatusOK, response)
+	if cu, ok := err.(interface {
+		Code() int
+		Unwrap() error
+	}); ok {
+		if e := cu.Unwrap(); e != nil {
+			_writeResponse(w, cu.Code(), _errorResponse{Error: e.Error()})
+		} else if response == nil {
+			_writeResponse(w, cu.Code(), _errorResponse{Error: http.StatusText(cu.Code())})
+		} else {
+			_writeResponse(w, cu.Code(), response)
+		}
+		return
+	}
+	_writeResponse(w, http.StatusInternalServerError, _errorResponse{Error: err.Error()})
 }
 func _writeResponse(w http.ResponseWriter, code int, response any) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")

@@ -15,7 +15,7 @@ func TestWriteResponse(t *testing.T) {
 
 	_writeResponse(w, http.StatusOK, response)
 
-	assert.Equal(t, w.Result().StatusCode, http.StatusOK)
+	assert.Equal(t, http.StatusOK, w.Result().StatusCode)
 
 	var bodyResponse map[string]any
 	_ = json.Unmarshal(w.Body.Bytes(), &bodyResponse)

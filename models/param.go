@@ -8,6 +8,7 @@ import (
 // Param is a param of a function.
 type Param struct {
 	Field
+
 	Type   ParamType
 	Origin ParamOrigin
 }
@@ -34,7 +35,7 @@ func (ps Params) Map() map[string]Param {
 // ParamType is a type of Param.
 type ParamType string
 
-// ParamType checks if the param type equals to another type or is more specific.
+// Is checks if the param type equals to another type or is more specific.
 func (pt ParamType) Is(paramType ParamType) bool {
 	return strings.Contains(string(pt), string(paramType))
 }
@@ -44,12 +45,12 @@ func (pt ParamType) MapOf() ParamType {
 	return Map + "[]" + pt
 }
 
-// MapOf returns a new slice type with values of the current type.
+// SliceOf returns a new slice type with values of the current type.
 func (pt ParamType) SliceOf() ParamType {
 	return Slice + "[]" + pt
 }
 
-// MapOf returns a new custom type that equals to the current type.
+// CustomOf returns a new custom type that equals to the current type.
 func (pt ParamType) CustomOf() ParamType {
 	return Custom + "[]" + pt
 }

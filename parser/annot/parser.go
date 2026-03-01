@@ -19,17 +19,17 @@ const (
 	parseDepth = 100
 )
 
-// AnnotParser is a swag annotations parser.
+// Parser is a swag annotations parser.
 //
 // Uses the swag.Parser to parse the annotations.
-type AnnotParser struct {
+type Parser struct {
 	swag  *swag.Parser
 	Funcs s2aModels.Functions
 }
 
 // NewAnnotParser returns a new swag annotations parser.
-func NewAnnotParser() *AnnotParser {
-	return &AnnotParser{
+func NewAnnotParser() *Parser {
+	return &Parser{
 		swag:  swag.New(swag.SetParseDependency(parseFlags)),
 		Funcs: make(s2aModels.Functions, 0),
 	}
@@ -39,7 +39,7 @@ func NewAnnotParser() *AnnotParser {
 //
 // Runs the swag.Parser and uses its results to obtain
 // information about functions.
-func (p *AnnotParser) Parse(pkgPath, mainFile string) error {
+func (p *Parser) Parse(pkgPath, mainFile string) error {
 	log.Printf("Parsing swag annotations from '%s'", pkgPath)
 
 	if err := p.swag.ParseAPI(pkgPath, mainFile, parseDepth); err != nil {
@@ -61,7 +61,7 @@ func (p *AnnotParser) Parse(pkgPath, mainFile string) error {
 }
 
 // parsePath parses path information.
-func (p *AnnotParser) parsePath(path string, item spec.PathItem) error {
+func (p *Parser) parsePath(path string, item spec.PathItem) error {
 	if item.Get != nil {
 		if err := p.parseMethod(http.MethodGet, path, item.Get); err != nil {
 			return fmt.Errorf("%s: %w", http.MethodGet, err)
@@ -108,13 +108,13 @@ func (p *AnnotParser) parsePath(path string, item spec.PathItem) error {
 }
 
 // parseMethod parses method information.
-func (p *AnnotParser) parseMethod(method, path string, op *spec.Operation) error {
+func (p *Parser) parseMethod(method, path string, op *spec.Operation) error {
 	if op == nil {
-		return fmt.Errorf("op is nil")
+		return errors.New("op is nil")
 	}
 
 	if op.ID == "" {
-		return fmt.Errorf("ID is empty")
+		return errors.New("ID is empty")
 	}
 
 	log.Printf("Parsing function '%s' (%s %s)", op.ID, method, path)
@@ -186,8 +186,8 @@ func getParamType(parameter spec.Parameter) (s2aModels.ParamType, error) {
 		schema = parameter.Schema
 	} else {
 		var (
-			items                *spec.SchemaOrArray = nil
-			additionalProperties *spec.SchemaOrBool  = nil
+			items                *spec.SchemaOrArray
+			additionalProperties *spec.SchemaOrBool
 		)
 
 		if parameter.Schema != nil {
@@ -222,9 +222,9 @@ func getSchemaParamType(schema *spec.Schema) (s2aModels.ParamType, error) {
 
 			// Returning a custom type.
 			return subType.CustomOf(), nil
-		} else {
-			return s2aModels.Any, nil
 		}
+
+		return s2aModels.Any, nil
 	}
 
 	// Parsing swag type.

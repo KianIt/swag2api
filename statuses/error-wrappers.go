@@ -1,4 +1,4 @@
-package errors
+package statuses
 
 // statusCode is an HTTP status code.
 type statusCode int
@@ -68,26 +68,26 @@ const (
 	statusNetworkAuthenticationRequiredError statusCode = 511
 )
 
-// statusCodeErrorWrapping is a status code error wrapper.
+// statusCodeWrappingError is a status code error wrapper.
 //
 // Holds an error with a status code.
-type statusCodeErrorWrapping struct {
+type statusCodeWrappingError struct {
 	sc  statusCode
 	err error
 }
 
 // Code returns the status code.
-func (wr *statusCodeErrorWrapping) Code() int {
+func (wr *statusCodeWrappingError) Code() int {
 	return int(wr.sc)
 }
 
 // Unwrap returns the wrapped error.
-func (wr *statusCodeErrorWrapping) Unwrap() error {
+func (wr *statusCodeWrappingError) Unwrap() error {
 	return wr.err
 }
 
 // Error returns the wrapped error message.
-func (wr *statusCodeErrorWrapping) Error() string {
+func (wr *statusCodeWrappingError) Error() string {
 	if wr.err != nil {
 		return wr.err.Error()
 	}
@@ -95,14 +95,14 @@ func (wr *statusCodeErrorWrapping) Error() string {
 }
 
 // wrapError wraps an error with a status code.
-func wrapError(sc statusCode, err error) *statusCodeErrorWrapping {
-	return &statusCodeErrorWrapping{
+func wrapError(sc statusCode, err error) *statusCodeWrappingError {
+	return &statusCodeWrappingError{
 		sc:  sc,
 		err: err,
 	}
 }
 
-// StstusCodeErrorWrapper is a status code error wrapper.
+// StatusCodeErrorWrapper is a status code error wrapper.
 //
 // Wraps an error with some status code.
 type StatusCodeErrorWrapper func(err error) error

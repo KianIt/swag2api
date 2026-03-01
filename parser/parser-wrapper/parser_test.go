@@ -1,4 +1,4 @@
-package parser
+package parserwrapper
 
 import (
 	"testing"
@@ -237,7 +237,7 @@ func TestParser_CombineFunctions(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			parser := NewParser()
+			parser := NewParserWrapper()
 			parser.annot.Funcs = tc.annotFuncs
 			parser.source.Funcs = tc.sourceFuncs
 
@@ -254,24 +254,24 @@ func TestParser_CombineFunctions(t *testing.T) {
 }
 
 func TestParser_Parse(t *testing.T) {
-	pkgPath := "./testdata/ok"
+	pkgPath := "../testdata/ok"
 	mainFile := "main.go"
 	handlerName := "handler"
 
-	parser := NewParser()
+	parser := NewParserWrapper()
 
-	assert.NoError(t, parser.Parse(pkgPath, mainFile, handlerName))
+	require.NoError(t, parser.Parse(pkgPath, mainFile, handlerName))
 
 	assert.Equal(
 		t,
-		parser.GetInfo(),
 		models.ParsingInfo{
 			PkgName: "ok",
 			Imports: []s2aModels.Import{
-				s2aModels.Import{
+				{
 					Path:  "net/http",
-					Alias: ""},
-				s2aModels.Import{
+					Alias: "",
+				},
+				{
 					Path:  "github.com/KianIt/swag2api/parser/testdata/ok/models",
 					Alias: "models",
 				},
@@ -373,5 +373,6 @@ func TestParser_Parse(t *testing.T) {
 				}},
 			HTTPHandler: models.HTTPHandlerInfo{Name: "handler", Exists: true},
 		},
+		parser.GetInfo(),
 	)
 }

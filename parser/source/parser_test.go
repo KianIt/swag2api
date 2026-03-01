@@ -86,7 +86,7 @@ func TestSourceParser_getType(t *testing.T) {
 	parser := NewSourceParser()
 
 	typeExpr, paramType, err := parser.getType(ast.NewIdent("[]pkg.Type"))
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "[]pkg.Type", typeExpr)
 	assert.Equal(t, s2aModels.ParamType("slice[]custom[]pkg.Type"), paramType)
 }
@@ -442,7 +442,6 @@ func TestSourceParser_field2Param(t *testing.T) {
 
 			require.NoError(t, err)
 			assert.Equal(t, tc.params, results)
-
 		})
 	}
 }
@@ -670,7 +669,7 @@ func TestSourceParser_parseFuncDecl(t *testing.T) {
 				},
 			},
 		})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(
 			t,
 			s2aModels.Functions{
@@ -918,7 +917,7 @@ func TestSourceParser_Parse(t *testing.T) {
 
 			err := parser.Parse(tc.pkgPath, tc.handlerName)
 
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(
 				t,
 				s2aModels.Functions{

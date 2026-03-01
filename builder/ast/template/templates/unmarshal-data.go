@@ -10,7 +10,7 @@ func _unmarshalString[T any](value string) (buf T, err error) {
 }
 
 func _unmarshalBytes[T any](value []byte) (buf T, err error) {
-	if err := json.Unmarshal(value, &buf); err != nil {
+	if err = json.Unmarshal(value, &buf); err != nil {
 		return buf, fmt.Errorf("unmarshal: %w", err)
 	}
 
