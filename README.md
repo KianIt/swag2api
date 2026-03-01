@@ -167,6 +167,41 @@ func init() {
 }
 ```
 
+## HTTP statuses
+
+You can manipulate with the request handler's HTTP response status code. To do this you need to add an error result to your function and to wrap it with a wrapper from the package
+
+```sh
+github.com/KianIt/swag2api/statuses
+```
+
+For example, function that returns an error wrapped with `NotFoundError` wrapper:
+
+```go
+// method9 godoc
+// @ID method9
+// @Router /path-to-method9 [get]
+func method9() (result string, err error) {
+	return "failed", s2aStatuses.NotFoundError(errors.New("test error"))
+}
+```
+
+This will change the response status code to `404` and return an error response.
+
+Another example, function that returns a `nil` error wrapped with `NotFoundError` wrapper:
+
+```go
+// method8 godoc
+// @ID method8
+// @Router /path-to-method8 [get]
+func method8() (result string, err error) {
+	return "success", s2aStatuses.NotFoundError(nil)
+}
+```
+
+This will also change the response status code to `404`, but the result will be successfull.
+
+
 ## More
 
 You can find more examples in the [example](example) directory.
