@@ -1,0 +1,3172 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>file-compiler: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/KianIt/swag2api/builder/ast/file-compiler/file-compiler.go (100.0%)</option>
+				
+				<option value="file1">github.com/KianIt/swag2api/builder/ast/models/getters.go (100.0%)</option>
+				
+				<option value="file2">github.com/KianIt/swag2api/builder/ast/models/types.go (94.4%)</option>
+				
+				<option value="file3">github.com/KianIt/swag2api/builder/ast/template/manager.go (87.2%)</option>
+				
+				<option value="file4">github.com/KianIt/swag2api/builder/ast/template/models/templates.go (100.0%)</option>
+				
+				<option value="file5">github.com/KianIt/swag2api/builder/ast/template/templates/handle-bad-request.go (100.0%)</option>
+				
+				<option value="file6">github.com/KianIt/swag2api/builder/ast/template/templates/handle-result.go (100.0%)</option>
+				
+				<option value="file7">github.com/KianIt/swag2api/builder/ast/template/templates/unmarshal-data.go (75.0%)</option>
+				
+				<option value="file8">github.com/KianIt/swag2api/builder/ast/template/templates/write-response.go (100.0%)</option>
+				
+				<option value="file9">github.com/KianIt/swag2api/builder/builder.go (93.4%)</option>
+				
+				<option value="file10">github.com/KianIt/swag2api/builder/models/token.go (100.0%)</option>
+				
+				<option value="file11">github.com/KianIt/swag2api/cmd/swag2api/main.go (0.0%)</option>
+				
+				<option value="file12">github.com/KianIt/swag2api/example/generated.go (0.0%)</option>
+				
+				<option value="file13">github.com/KianIt/swag2api/example/main.go (0.0%)</option>
+				
+				<option value="file14">github.com/KianIt/swag2api/example/methods.go (0.0%)</option>
+				
+				<option value="file15">github.com/KianIt/swag2api/generate.go (0.0%)</option>
+				
+				<option value="file16">github.com/KianIt/swag2api/models/endpoint.go (100.0%)</option>
+				
+				<option value="file17">github.com/KianIt/swag2api/models/field.go (100.0%)</option>
+				
+				<option value="file18">github.com/KianIt/swag2api/models/function.go (100.0%)</option>
+				
+				<option value="file19">github.com/KianIt/swag2api/models/import.go (100.0%)</option>
+				
+				<option value="file20">github.com/KianIt/swag2api/models/param.go (100.0%)</option>
+				
+				<option value="file21">github.com/KianIt/swag2api/parser/annot/parser.go (78.4%)</option>
+				
+				<option value="file22">github.com/KianIt/swag2api/parser/parser-wrapper/parser.go (91.3%)</option>
+				
+				<option value="file23">github.com/KianIt/swag2api/parser/source/parser.go (89.3%)</option>
+				
+				<option value="file24">github.com/KianIt/swag2api/statuses/error-wrappers.go (98.5%)</option>
+				
+				<option value="file25">github.com/KianIt/swag2api/utils/files.go (100.0%)</option>
+				
+				<option value="file26">github.com/KianIt/swag2api/validator/validator.go (84.6%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package filecompiler
+
+import (
+        "go/ast"
+        "go/token"
+        "strconv"
+
+        "github.com/KianIt/swag2api/builder/ast/models"
+)
+
+// FileCompiler is an AST file compiler.
+//
+// Turns AST declaration into a single file.
+type FileCompiler struct {
+        file    *ast.File
+        imports []ast.Spec
+        decls   []ast.Decl
+}
+
+// NewFileCompiler returns a new file compiler.
+func NewFileCompiler(pkgName string) *FileCompiler <span class="cov8" title="1">{
+        return &amp;FileCompiler{
+                file: &amp;ast.File{
+                        Name:  ast.NewIdent(pkgName),
+                        Decls: make([]ast.Decl, 0),
+                        Scope: ast.NewScope(nil),
+                },
+        }
+}</span>
+
+// AddImport adds an import.
+func (fc *FileCompiler) AddImport(path string, alias string) <span class="cov8" title="1">{
+        spec := &amp;ast.ImportSpec{
+                Name: ast.NewIdent(alias),
+                Path: models.GetStringBasicLit(strconv.Quote(path)),
+        }
+        fc.imports = append(fc.imports, spec)
+}</span>
+
+// AddDecl adds a declaration.
+func (fc *FileCompiler) AddDecl(decl models.Decl) <span class="cov8" title="1">{
+        fc.decls = append(fc.decls, decl)
+}</span>
+
+// Compile compiles a file.
+func (fc *FileCompiler) Compile() *ast.File <span class="cov8" title="1">{
+        if len(fc.imports) &gt; 0 </span><span class="cov8" title="1">{
+                fc.compileImports()
+        }</span>
+
+        <span class="cov8" title="1">for _, decl := range fc.decls </span><span class="cov8" title="1">{
+                fc.compileDecl(decl)
+        }</span>
+
+        <span class="cov8" title="1">return fc.file</span>
+}
+
+// compileImports compiles file imports.
+func (fc *FileCompiler) compileImports() <span class="cov8" title="1">{
+        lPar, rPar := token.NoPos, token.NoPos
+        if len(fc.imports) &gt; 1 </span><span class="cov8" title="1">{
+                lPar = fc.imports[0].Pos()
+                rPar = fc.imports[len(fc.imports)-1].End()
+        }</span>
+
+        <span class="cov8" title="1">decl := &amp;ast.GenDecl{
+                Tok:    token.IMPORT,
+                Lparen: lPar,
+                Specs:  fc.imports,
+                Rparen: rPar,
+        }
+
+        fc.compileDecl(decl)</span>
+}
+
+// compileDecl compiles file declarations.
+func (fc *FileCompiler) compileDecl(decl models.Decl) <span class="cov8" title="1">{
+        fc.file.Decls = append(fc.file.Decls, decl)
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package models
+
+import (
+        "go/ast"
+        "go/token"
+)
+
+// GetField returns as AST field.
+func GetField(name, typeExpr, tag string) Field <span class="cov8" title="1">{
+        return &amp;ast.Field{
+                Names: []*ast.Ident{ast.NewIdent(name)},
+                Type:  ast.NewIdent(typeExpr),
+                Tag:   GetStringBasicLit(tag),
+        }
+}</span>
+
+// GetStringBasicLit returns an AST string literal.
+func GetStringBasicLit(value string) BasicLit <span class="cov8" title="1">{
+        return &amp;ast.BasicLit{
+                Kind:  token.STRING,
+                Value: value,
+        }
+}</span>
+
+// GetNeqExpr returns as AST Not Equal expression.
+func GetNeqExpr(left, right Expr) Expr <span class="cov8" title="1">{
+        return &amp;ast.BinaryExpr{
+                Op: token.NEQ,
+                X:  left,
+                Y:  right,
+        }
+}</span>
+
+// GetCallExpr returns as AST Calling expression.
+func GetCallExpr(caller Expr, params Exprs) Expr <span class="cov8" title="1">{
+        return &amp;ast.CallExpr{
+                Fun:  caller,
+                Args: params.Ast(),
+        }
+}</span>
+
+// GetSelectorExpr returns an AST Selector expression.
+func GetSelectorExpr(source Expr, item string) Expr <span class="cov8" title="1">{
+        return &amp;ast.SelectorExpr{
+                X:   source,
+                Sel: ast.NewIdent(item),
+        }
+}</span>
+
+// GetStructLitExpr returns an AST struct literal.
+func GetStructLitExpr(name string, elements Exprs) Expr <span class="cov8" title="1">{
+        return &amp;ast.CompositeLit{
+                Type: ast.NewIdent(name),
+                Elts: elements.Ast(),
+        }
+}</span>
+
+// GetKeyValueExpr returns an AST Key-Value expression.
+func GetKeyValueExpr(key, value Expr) Expr <span class="cov8" title="1">{
+        return &amp;ast.KeyValueExpr{
+                Key:   key,
+                Value: value,
+        }
+}</span>
+
+// GetNameExpr returns an AST Name expression.
+func GetNameExpr(name string) Expr <span class="cov8" title="1">{
+        return ast.NewIdent(name)
+}</span>
+
+// GetAssignStmt returns an AST Assign statement.
+func GetAssignStmt(left, right Exprs) Stmt <span class="cov8" title="1">{
+        return getAssignStmt(left, right, token.ASSIGN)
+}</span>
+
+// GetAssignDefineStmt returns an AST Assign (Define) statement.
+func GetAssignDefineStmt(left, right Exprs) Stmt <span class="cov8" title="1">{
+        return getAssignStmt(left, right, token.DEFINE)
+}</span>
+
+// getAssignStmt returns an AST assign statement.
+func getAssignStmt(left, right Exprs, tok token.Token) Stmt <span class="cov8" title="1">{
+        return &amp;ast.AssignStmt{
+                Lhs: left.Ast(),
+                Tok: tok,
+                Rhs: right.Ast(),
+        }
+}</span>
+
+// GetStructStmt returns an AST Struct statement.
+func GetStructStmt(name string, fields Fields) Stmt <span class="cov8" title="1">{
+        return &amp;ast.DeclStmt{
+                Decl: &amp;ast.GenDecl{
+                        Tok: token.TYPE,
+                        Specs: []ast.Spec{
+                                &amp;ast.TypeSpec{
+                                        Name: ast.NewIdent(name),
+                                        Type: &amp;ast.StructType{
+                                                Fields: &amp;ast.FieldList{
+                                                        List: fields.Ast(),
+                                                },
+                                        },
+                                },
+                        },
+                },
+        }
+}</span>
+
+// GetIfStmt returns an AST If statement.
+func GetIfStmt(cond Expr, bodyStmts Stmts) Stmt <span class="cov8" title="1">{
+        return &amp;ast.IfStmt{
+                Cond: cond,
+                Body: &amp;ast.BlockStmt{
+                        List: bodyStmts.Ast(),
+                },
+        }
+}</span>
+
+// GetExprStmt returns an AST expression as statement.
+func GetExprStmt(expr Expr) Stmt <span class="cov8" title="1">{
+        return &amp;ast.ExprStmt{
+                X: expr,
+        }
+}</span>
+
+// GetVarDecl returns an AST Variable declaration.
+func GetVarDecl(name, typeExpr string) Decl <span class="cov8" title="1">{
+        return &amp;ast.GenDecl{
+                Tok: token.VAR,
+                Specs: []ast.Spec{
+                        &amp;ast.ValueSpec{
+                                Names: []*ast.Ident{ast.NewIdent(name)},
+                                Type:  ast.NewIdent(typeExpr),
+                        },
+                },
+        }
+}</span>
+
+// GetFuncDecl returns an AST Function declaration.
+func GetFuncDecl(name string, params Fields, bodyStmts Stmts) Decl <span class="cov8" title="1">{
+        return &amp;ast.FuncDecl{
+                Type: &amp;ast.FuncType{
+                        Func: token.Pos(0),
+                        Params: &amp;ast.FieldList{
+                                List: params.Ast(),
+                        },
+                },
+                Name: ast.NewIdent(name),
+                Body: &amp;ast.BlockStmt{
+                        List: bodyStmts.Ast(),
+                },
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package models
+
+import (
+        "go/ast"
+)
+
+type (
+        Field    *ast.Field
+        Fields   []Field
+        BasicLit *ast.BasicLit
+        Expr     ast.Expr
+        Exprs    []Expr
+        Stmt     ast.Stmt
+        Stmts    []Stmt
+        Decl     ast.Decl
+)
+
+// Ast returns Fields as []*ast.Field.
+func (fs Fields) Ast() []*ast.Field <span class="cov8" title="1">{
+        if len(fs) == 0 </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">astFs := make([]*ast.Field, 0, len(fs))
+        for _, f := range fs </span><span class="cov8" title="1">{
+                astFs = append(astFs, f)
+        }</span>
+
+        <span class="cov8" title="1">return astFs</span>
+}
+
+// Ast returns Exprs as []ast.Expr.
+func (es Exprs) Ast() []ast.Expr <span class="cov8" title="1">{
+        if len(es) == 0 </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">astEs := make([]ast.Expr, 0, len(es))
+        for _, e := range es </span><span class="cov8" title="1">{
+                astEs = append(astEs, e)
+        }</span>
+
+        <span class="cov8" title="1">return astEs</span>
+}
+
+// Ast returns Stmts as []ast.Stmt.
+func (ss Stmts) Ast() []ast.Stmt <span class="cov8" title="1">{
+        if len(ss) == 0 </span><span class="cov0" title="0">{
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">astSs := make([]ast.Stmt, 0, len(ss))
+        for _, e := range ss </span><span class="cov8" title="1">{
+                astSs = append(astSs, e)
+        }</span>
+
+        <span class="cov8" title="1">return astSs</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package asttemplate
+
+import (
+        "errors"
+        "fmt"
+        "go/ast"
+        "go/parser"
+        "go/token"
+        "log"
+        "os"
+        "path/filepath"
+        "runtime"
+
+        astModels "github.com/KianIt/swag2api/builder/ast/models"
+        "github.com/KianIt/swag2api/builder/ast/template/models"
+        "github.com/KianIt/swag2api/utils"
+)
+
+const templatesRelativePath = "./templates"
+
+// Manager is a manager for source code templates.
+//
+// Loads, keeps and returns templates.
+type Manager struct {
+        fs      *token.FileSet
+        declMap map[string]ast.Decl
+}
+
+// NewManager returns a new template manager.
+func NewManager() *Manager <span class="cov8" title="1">{
+        return &amp;Manager{
+                fs:      token.NewFileSet(),
+                declMap: make(map[string]ast.Decl),
+        }
+}</span>
+
+// Load loads templates from the source code.
+//
+// Determines the template source code actual absoule path,
+// parses the source code files and saves the templates.
+func (m *Manager) Load() error <span class="cov8" title="1">{
+        log.Printf("Loading templates")
+
+        absPath, err := getTemplatesAbsPath()
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("abs path: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">log.Printf("Templates absolute path: '%s'", absPath)
+
+        files, err := m.parseFiles(absPath)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("parsing files: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">for _, file := range files </span><span class="cov8" title="1">{
+                ast.Walk(m, file)
+        }</span>
+
+        <span class="cov8" title="1">log.Printf("Templates loaded successfully")
+
+        return nil</span>
+}
+
+// parseFiles parses files from the template source code.
+func (m *Manager) parseFiles(dirPath string) ([]*ast.File, error) <span class="cov8" title="1">{
+        files := make([]*ast.File, 0)
+
+        if err := filepath.Walk(dirPath, func(path string, info os.FileInfo, _ error) error </span><span class="cov8" title="1">{
+                if info.IsDir() || !utils.IsGoSource(info.Name()) </span><span class="cov8" title="1">{
+                        return nil
+                }</span>
+
+                <span class="cov8" title="1">file, parseErr := parser.ParseFile(m.fs, path, nil, parser.ParseComments)
+                if parseErr != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("file '%s': %w", path, parseErr)
+                }</span>
+
+                <span class="cov8" title="1">files = append(files, file)
+
+                return nil</span>
+        }); err != nil <span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return files, nil</span>
+}
+
+// Visit implements the [ast.Visitor] interface.
+//
+// Allows the Manager to walk over nodes in a parsed file.
+func (m *Manager) Visit(node ast.Node) ast.Visitor <span class="cov8" title="1">{
+        if node == nil </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">switch decl := node.(type) </span>{
+        case *ast.File:<span class="cov8" title="1">
+                return m</span>
+        case *ast.GenDecl:<span class="cov8" title="1">
+                // Parsing general declarations.
+                for _, spec := range decl.Specs </span><span class="cov8" title="1">{
+                        if typeSpec, ok := spec.(*ast.TypeSpec); ok &amp;&amp; models.IsExistingTemplate(typeSpec.Name.Name) </span><span class="cov8" title="1">{
+                                m.declMap[typeSpec.Name.Name] = decl
+                        }</span>
+                }
+
+                <span class="cov8" title="1">return m</span>
+        case *ast.FuncDecl:<span class="cov8" title="1">
+                // Parsing function declarations.
+                if models.IsExistingTemplate(decl.Name.Name) </span><span class="cov8" title="1">{
+                        m.declMap[decl.Name.Name] = decl
+                }</span>
+
+                <span class="cov8" title="1">return m</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// GetTemplates returns loaded templates.
+func (m *Manager) GetTemplates() ([]astModels.Decl, error) <span class="cov8" title="1">{
+        if m.declMap == nil </span><span class="cov0" title="0">{
+                return nil, errors.New("decl map is nil")
+        }</span>
+
+        <span class="cov8" title="1">decls := make([]astModels.Decl, 0, len(models.TemplateNames))
+        for _, name := range models.TemplateNames </span><span class="cov8" title="1">{
+                if template, ok := m.declMap[name]; ok </span><span class="cov8" title="1">{
+                        decls = append(decls, template)
+                }</span>
+        }
+
+        <span class="cov8" title="1">return decls, nil</span>
+}
+
+// getTemplatesAbsPath returns the template source code actual absolute path.
+func getTemplatesAbsPath() (string, error) <span class="cov8" title="1">{
+        _, filename, _, ok := runtime.Caller(0)
+        if !ok </span><span class="cov0" title="0">{
+                return "", errors.New("can't get caller")
+        }</span>
+
+        <span class="cov8" title="1">return filepath.Join(filepath.Dir(filename), templatesRelativePath), nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package models
+
+import (
+        "slices"
+)
+
+const (
+        ErrorResponse    = "_errorResponse"
+        UnmarshalString  = "_unmarshalString"
+        UnmarshalBytes   = "_unmarshalBytes"
+        HandleBadRequest = "_handleBadRequest"
+        HandleResult     = "_handleResult"
+        WriteResponse    = "_writeResponse"
+)
+
+// TemplateNames is a list of all templates.
+var TemplateNames = []string{
+        ErrorResponse,
+        UnmarshalString,
+        UnmarshalBytes,
+        HandleBadRequest,
+        HandleResult,
+        WriteResponse,
+}
+
+// IsExistingTemplate checks if a template with a given name exists.
+func IsExistingTemplate(name string) bool <span class="cov8" title="1">{
+        return slices.Contains(TemplateNames, name)
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package templates
+
+import (
+        "net/http"
+)
+
+func _handleBadRequest(w http.ResponseWriter, err error) <span class="cov8" title="1">{
+        var (
+                code = http.StatusBadRequest
+                msg  = http.StatusText(http.StatusBadRequest)
+        )
+
+        if err != nil </span><span class="cov8" title="1">{
+                msg = err.Error()
+        }</span>
+
+        <span class="cov8" title="1">response := _errorResponse{
+                Error: msg,
+        }
+
+        _writeResponse(w, code, response)</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package templates
+
+import (
+        "net/http"
+)
+
+func _handleResult(w http.ResponseWriter, err error, response any) <span class="cov8" title="1">{
+        if err == nil </span><span class="cov8" title="1">{
+                _writeResponse(w, http.StatusOK, response)
+                return
+        }</span>
+
+        <span class="cov8" title="1">if cu, ok := err.(interface {
+                Code() int
+                Unwrap() error
+        }); ok </span><span class="cov8" title="1">{
+                if e := cu.Unwrap(); e != nil </span><span class="cov8" title="1">{
+                        _writeResponse(w, cu.Code(), _errorResponse{Error: e.Error()})
+                }</span> else<span class="cov8" title="1"> if response == nil </span><span class="cov8" title="1">{
+                        _writeResponse(w, cu.Code(), _errorResponse{Error: http.StatusText(cu.Code())})
+                }</span> else<span class="cov8" title="1"> {
+                        _writeResponse(w, cu.Code(), response)
+                }</span>
+                <span class="cov8" title="1">return</span>
+        }
+
+        <span class="cov8" title="1">_writeResponse(w, http.StatusInternalServerError, _errorResponse{Error: err.Error()})</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package templates
+
+import (
+        "encoding/json"
+        "fmt"
+)
+
+func _unmarshalString[T any](value string) (buf T, err error) <span class="cov8" title="1">{
+        return _unmarshalBytes[T]([]byte(value))
+}</span>
+
+func _unmarshalBytes[T any](value []byte) (buf T, err error) <span class="cov8" title="1">{
+        if err = json.Unmarshal(value, &amp;buf); err != nil </span><span class="cov0" title="0">{
+                return buf, fmt.Errorf("unmarshal: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return buf, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package templates
+
+import (
+        "encoding/json"
+        "net/http"
+)
+
+func _writeResponse(w http.ResponseWriter, code int, response any) <span class="cov8" title="1">{
+        w.Header().Set("Content-Type", "application/json; charset=utf-8")
+        w.WriteHeader(code)
+        _ = json.NewEncoder(w).Encode(response)
+}</span>
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package builder
+
+import (
+        "bytes"
+        "fmt"
+        "go/format"
+        "go/token"
+        "log"
+        "os"
+        "strconv"
+
+        "golang.org/x/tools/imports"
+
+        filecompiler "github.com/KianIt/swag2api/builder/ast/file-compiler"
+        astm "github.com/KianIt/swag2api/builder/ast/models"
+        asttemplate "github.com/KianIt/swag2api/builder/ast/template"
+        templateModels "github.com/KianIt/swag2api/builder/ast/template/models"
+        "github.com/KianIt/swag2api/builder/models"
+        "github.com/KianIt/swag2api/constants"
+        s2aModels "github.com/KianIt/swag2api/models"
+        parserModels "github.com/KianIt/swag2api/parser/models"
+)
+
+var genComment = fmt.Sprintf("// Code generated by swag2api v%s. DO NOT EDIT.\n", constants.Version)
+
+// Builder is a code generator for the API.
+//
+// It builds an abstract syntax tree (AST) by given
+// parsing information and dumps it to a file.
+type Builder struct {
+        p  parserModels.ParsingInfo
+        tm *asttemplate.Manager
+        fc *filecompiler.FileCompiler
+}
+
+// NewBuilder returns a new builder.
+func NewBuilder(parsingInfo parserModels.ParsingInfo) *Builder <span class="cov8" title="1">{
+        return &amp;Builder{
+                p:  parsingInfo,
+                tm: asttemplate.NewManager(),
+                fc: filecompiler.NewFileCompiler(parsingInfo.PkgName),
+        }
+}</span>
+
+// Build runs API generating.
+//
+// Loads templates, builds the AST and saves the source code to a file.
+func (b *Builder) Build(apiPath string) error <span class="cov8" title="1">{
+        log.Printf("Building into '%s'", apiPath)
+
+        if err := b.tm.Load(); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("loading templates: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">b.buildAST()
+
+        if err := b.saveToFile(apiPath); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("saving to file: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">log.Printf("Built successfully")
+
+        return nil</span>
+}
+
+// saveToFile dumps the AST and saves the source code to a file.
+func (b *Builder) saveToFile(apiPath string) error <span class="cov8" title="1">{
+        file, err := os.Create(apiPath)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("creating file: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">astDump, err := b.dumpAST()
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("dumping AST: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">if _, err = file.Write(append([]byte(genComment), astDump...)); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("writing to file: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// dumpAST dumps the AST and processes the source code imports.
+func (b *Builder) dumpAST() ([]byte, error) <span class="cov8" title="1">{
+        var buf bytes.Buffer
+
+        astFile := b.fc.Compile()
+
+        if err := format.Node(&amp;buf, token.NewFileSet(), astFile); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("formatting node: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">astDump, err := imports.Process("", buf.Bytes(), nil)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("sorting imports: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return astDump, nil</span>
+}
+
+// buildAST build the AST.
+func (b *Builder) buildAST() <span class="cov8" title="1">{
+        b.addImports()
+        b.addHTTPHandler()
+        b.addTemplates()
+        b.addFuncHandlers()
+        b.addInit()
+}</span>
+
+// addImports adds imports to the AST.
+//
+// Adds necessary imports and imports from parsed files.
+func (b *Builder) addImports() <span class="cov8" title="1">{
+        b.addImport("encoding/json")
+        b.addImport("net/http")
+        b.addImport("strconv")
+        b.addImport("io")
+
+        for _, imp := range b.p.Imports </span><span class="cov8" title="1">{
+                b.addAliasedImport(imp.Path, imp.Alias)
+        }</span>
+}
+
+// addImport adds import without an alias to the AST.
+func (b *Builder) addImport(path string) <span class="cov8" title="1">{
+        b.addAliasedImport(path, "")
+}</span>
+
+// addAliasedImport adds import with an alias to the AST.
+func (b *Builder) addAliasedImport(path, alias string) <span class="cov8" title="1">{
+        b.fc.AddImport(path, alias)
+}</span>
+
+// addHTTPHandler adds an HTTP handler for the API to the AST.
+//
+// Adds an HTTP handler declaration, if it doesn't exist.
+func (b *Builder) addHTTPHandler() <span class="cov8" title="1">{
+        if b.p.HTTPHandler.Exists </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">b.fc.AddDecl(astm.GetVarDecl(b.p.HTTPHandler.Name, models.HandlerToken.String()))</span>
+}
+
+// addTemplates add source code templates to the AST.
+//
+// Gets templates from the template manager and adds the templates to the AST.
+func (b *Builder) addTemplates() <span class="cov8" title="1">{
+        decls, err := b.tm.GetTemplates()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Printf("Error: couldn't get templates: %v", err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">for _, decl := range decls </span><span class="cov8" title="1">{
+                b.fc.AddDecl(decl)
+        }</span>
+}
+
+// addInit adds the init function to the AST.
+//
+// Adds the init function that is called on the package loading
+// and setups function handlers dispatching by the HTTP handler.
+func (b *Builder) addInit() <span class="cov8" title="1">{
+        var bodyStmts astm.Stmts
+
+        bodyStmts = append(bodyStmts,
+                astm.GetAssignDefineStmt(
+                        astm.Exprs{models.MuxToken.AstExpr()},
+                        astm.Exprs{astm.GetCallExpr(models.NewMuxToken.AstExpr(), nil)},
+                ),
+        )
+
+        for _, f := range b.p.Funcs </span><span class="cov8" title="1">{
+                bodyStmts = append(bodyStmts,
+                        astm.GetExprStmt(
+                                astm.GetCallExpr(
+                                        astm.GetSelectorExpr(models.MuxToken.AstExpr(), models.HandleFuncToken.String()),
+                                        astm.Exprs{
+                                                astm.GetNameExpr(strconv.Quote(f.Endpoint.HandlerPath())),
+                                                astm.GetNameExpr(f.HandlerName()),
+                                        },
+                                ),
+                        ),
+                )
+        }</span>
+
+        <span class="cov8" title="1">bodyStmts = append(bodyStmts,
+                astm.GetAssignStmt(
+                        astm.Exprs{astm.GetNameExpr(b.p.HTTPHandler.Name)},
+                        astm.Exprs{models.MuxToken.AstExpr()},
+                ),
+        )
+
+        b.fc.AddDecl(
+                astm.GetFuncDecl(
+                        models.InitToken.String(),
+                        nil,
+                        bodyStmts,
+                ),
+        )</span>
+}
+
+// addFuncHandlers adds function handlers to the AST.
+func (b *Builder) addFuncHandlers() <span class="cov8" title="1">{
+        for _, f := range b.p.Funcs </span><span class="cov8" title="1">{
+                b.addFuncHandler(f)
+        }</span>
+}
+
+// addFuncHandler adds a function handler to the AST.
+//
+// Adds a function handler that processes a certain request.
+// Gets params from the request, passes them to the function,
+// gets results and writes a response.
+func (b *Builder) addFuncHandler(f s2aModels.Function) <span class="cov8" title="1">{
+        var bodyStmts astm.Stmts
+
+        paramStmts, isBodyStruct := b.getFuncHandlerParamStmts(f)
+        bodyStmts = append(bodyStmts,
+                paramStmts...,
+        )
+
+        bodyStmts = append(bodyStmts,
+                getFuncHandlerFuncCallStmts(f, isBodyStruct)...,
+        )
+
+        bodyStmts = append(bodyStmts,
+                getFuncHandlerResultStmts(f)...,
+        )
+
+        b.fc.AddDecl(
+                astm.GetFuncDecl(
+                        f.HandlerName(),
+                        []astm.Field{
+                                astm.GetField(models.WToken.String(), models.WriterToken.String(), ""),
+                                astm.GetField(models.RToken.String(), models.RequestToken.String(), ""),
+                        },
+                        bodyStmts,
+                ),
+        )
+}</span>
+
+// getFuncHandlerParamStmts returns AST statements for function params processing.
+func (b *Builder) getFuncHandlerParamStmts(f s2aModels.Function) (paramStmts astm.Stmts, isBodyStruct bool) <span class="cov8" title="1">{
+        var bodyParams []s2aModels.Param
+
+        for _, param := range f.Params </span><span class="cov8" title="1">{
+                switch param.Origin </span>{
+                case s2aModels.Path, s2aModels.Query:<span class="cov8" title="1">
+                        var (
+                                paramNameExpr = astm.GetNameExpr(strconv.Quote(param.Name))
+                                paramGet      astm.Expr
+                        )
+
+                        if param.Origin == s2aModels.Path </span><span class="cov8" title="1">{
+                                paramGet = astm.GetCallExpr(
+                                        models.PathValueGetToken.AstExpr(),
+                                        astm.Exprs{paramNameExpr},
+                                )
+                        }</span> else<span class="cov8" title="1"> {
+                                paramGet = astm.GetCallExpr(
+                                        models.QueryValueGetToken.AstExpr(),
+                                        astm.Exprs{paramNameExpr},
+                                )
+                        }</span>
+
+                        <span class="cov8" title="1">paramStmts = append(paramStmts,
+                                astm.GetAssignDefineStmt(
+                                        astm.Exprs{astm.GetNameExpr(param.NameOrigin())},
+                                        astm.Exprs{paramGet},
+                                ),
+                        )
+
+                        unmarshalStmt, unmarshalErrName := getFuncHandlerParamUnmarshalStmt(param.NameOrigin(), param.Name, param.TypeExpr, false)
+                        paramStmts = append(paramStmts,
+                                unmarshalStmt,
+                        )
+
+                        paramStmts = append(paramStmts,
+                                getHandleBadRequestStmt(unmarshalErrName),
+                        )</span>
+                case s2aModels.Body:<span class="cov8" title="1">
+                        bodyParams = append(bodyParams, param)</span>
+                }
+        }
+
+        <span class="cov8" title="1">if len(bodyParams) == 0 </span><span class="cov8" title="1">{
+                return paramStmts, false
+        }</span>
+
+        <span class="cov8" title="1">bodyParamStmts, isBodyStruct := getFuncHandlerBodyParamStmts(bodyParams)
+        paramStmts = append(paramStmts,
+                bodyParamStmts...,
+        )
+
+        return paramStmts, isBodyStruct</span>
+}
+
+// getFuncHandlerBodyParamStmts returns AST statements for body params processing.
+func getFuncHandlerBodyParamStmts(params []s2aModels.Param) (paramStmts astm.Stmts, isStruct bool) <span class="cov8" title="1">{
+        paramStmts = append(paramStmts,
+                astm.GetAssignDefineStmt(
+                        astm.Exprs{models.BodyToken.AstExpr(), models.BodyReadErrToken.AstExpr()},
+                        astm.Exprs{models.BodyGetToken.AstExpr()}),
+                getHandleBadRequestStmt(models.BodyReadErrToken.String()),
+        )
+
+        var paramName, paramTypeExpr string
+        if len(params) &gt; 1 </span><span class="cov8" title="1">{
+                var fields = make([]astm.Field, 0, len(params))
+
+                for _, param := range params </span><span class="cov8" title="1">{
+                        fields = append(fields,
+                                astm.GetField(
+                                        param.NameCapitalized(),
+                                        param.TypeExpr,
+                                        param.JSONTag(),
+                                ),
+                        )
+                }</span>
+
+                <span class="cov8" title="1">paramStmts = append(paramStmts,
+                        astm.GetStructStmt(
+                                models.BodyTypeToken.String(),
+                                fields,
+                        ),
+                )
+
+                paramName = models.BodyValueToken.String()
+                paramTypeExpr = models.BodyTypeToken.String()
+
+                isStruct = true</span>
+        } else<span class="cov8" title="1"> {
+                paramName = params[0].Name
+                paramTypeExpr = params[0].TypeExpr
+
+                isStruct = false
+        }</span>
+
+        <span class="cov8" title="1">unmarshalStmt, unmarshalErrName := getFuncHandlerParamUnmarshalStmt(models.BodyToken.String(), paramName, paramTypeExpr, true)
+        paramStmts = append(paramStmts,
+                unmarshalStmt,
+        )
+
+        paramStmts = append(paramStmts,
+                getHandleBadRequestStmt(unmarshalErrName),
+        )
+
+        return paramStmts, isStruct</span>
+}
+
+// getFuncHandlerParamUnmarshalStmt returns an AST statement for param unmarshalling.
+func getFuncHandlerParamUnmarshalStmt(paramNameOrigin, paramName, typeExpr string, isBody bool) (astm.Stmt, string) <span class="cov8" title="1">{
+        var caller string
+        if !isBody </span><span class="cov8" title="1">{
+                caller = templateModels.UnmarshalString
+        }</span> else<span class="cov8" title="1"> {
+                caller = templateModels.UnmarshalBytes
+        }</span>
+        <span class="cov8" title="1">callerExpr := astm.GetNameExpr(fmt.Sprintf("%s[%s]", caller, typeExpr))
+
+        errName := paramName + models.UnmarshalErrSuffixToken.String()
+
+        return astm.GetAssignDefineStmt(
+                astm.Exprs{
+                        astm.GetNameExpr(paramName),
+                        astm.GetNameExpr(errName),
+                },
+                astm.Exprs{
+                        astm.GetCallExpr(
+                                callerExpr,
+                                astm.Exprs{astm.GetNameExpr(paramNameOrigin)},
+                        ),
+                },
+        ), errName</span>
+}
+
+// getFuncHandlerFuncCallStmts returns AST statements for function calling.
+func getFuncHandlerFuncCallStmts(f s2aModels.Function, isBodyStruct bool) (stmts astm.Stmts) <span class="cov8" title="1">{
+        resultExprs := make(astm.Exprs, 0, len(f.Results))
+        for _, result := range f.Results </span><span class="cov8" title="1">{
+                resultExprs = append(resultExprs, astm.GetNameExpr(result.Name))
+        }</span>
+
+        <span class="cov8" title="1">paramExprs := make(astm.Exprs, 0, len(f.Params))
+        for _, param := range f.Params </span><span class="cov8" title="1">{
+                var paramExpr astm.Expr
+                if param.Origin == s2aModels.Body &amp;&amp; isBodyStruct </span><span class="cov8" title="1">{
+                        paramExpr = astm.GetSelectorExpr(models.BodyValueToken.AstExpr(), param.NameCapitalized())
+                }</span> else<span class="cov8" title="1"> {
+                        paramExpr = astm.GetNameExpr(param.Name)
+                }</span>
+                <span class="cov8" title="1">paramExprs = append(paramExprs, paramExpr)</span>
+        }
+
+        <span class="cov8" title="1">stmts = append(stmts,
+                astm.GetAssignDefineStmt(
+                        resultExprs,
+                        astm.Exprs{
+                                astm.GetCallExpr(astm.GetNameExpr(f.Name), paramExprs),
+                        },
+                ),
+        )
+
+        return stmts</span>
+}
+
+// getFuncHandlerResultStmts returns AST statements for function results processing.
+func getFuncHandlerResultStmts(f s2aModels.Function) (stmts astm.Stmts) <span class="cov8" title="1">{
+        fields := make([]astm.Field, 0, len(f.Results)+1)
+        elements := make(astm.Exprs, 0, len(f.Results)+1)
+
+        resultErrExists := false
+        resultErrName := ""
+        for _, result := range f.Results </span><span class="cov8" title="1">{
+                if result.Name == "_" </span><span class="cov8" title="1">{
+                        continue</span>
+                }
+
+                <span class="cov8" title="1">if result.IsError() </span><span class="cov8" title="1">{
+                        resultErrExists = true
+                        resultErrName = result.Name
+                        continue</span>
+                }
+
+                <span class="cov8" title="1">fields = append(
+                        fields,
+                        astm.GetField(
+                                result.NameCapitalized(),
+                                result.TypeExpr,
+                                result.JSONTag(),
+                        ),
+                )
+
+                elements = append(
+                        elements,
+                        astm.GetKeyValueExpr(
+                                astm.GetNameExpr(result.NameCapitalized()),
+                                astm.GetNameExpr(result.Name),
+                        ),
+                )</span>
+        }
+
+        <span class="cov8" title="1">stmts = append(
+                stmts,
+                astm.GetStructStmt(
+                        models.ResultTypeToken.String(),
+                        fields,
+                ),
+                astm.GetAssignDefineStmt(
+                        astm.Exprs{models.ResultValueToken.AstExpr()},
+                        astm.Exprs{
+                                astm.GetStructLitExpr(
+                                        models.ResultTypeToken.String(),
+                                        elements,
+                                ),
+                        },
+                ),
+        )
+
+        if resultErrExists </span><span class="cov8" title="1">{
+                stmts = append(
+                        stmts,
+                        getHandleResultStmt(resultErrName),
+                )
+        }</span> else<span class="cov8" title="1"> {
+                stmts = append(
+                        stmts,
+                        getHandleResultStmt(models.NilToken.String()),
+                )
+        }</span>
+
+        <span class="cov8" title="1">return stmts</span>
+}
+
+// getHandleResultStmt returns an AST statement for handing bad request.
+func getHandleBadRequestStmt(errName string) astm.Stmt <span class="cov8" title="1">{
+        var errExpr = astm.GetNameExpr(errName)
+
+        return astm.GetIfStmt(
+                astm.GetNeqExpr(errExpr, models.NilToken.AstExpr()),
+                astm.Stmts{
+                        astm.GetExprStmt(
+                                astm.GetCallExpr(
+                                        astm.GetNameExpr(templateModels.HandleBadRequest),
+                                        astm.Exprs{models.WToken.AstExpr(), errExpr},
+                                ),
+                        ),
+                        astm.GetExprStmt(models.ReturnToken.AstExpr()),
+                },
+        )
+}</span>
+
+// getHandleResultStmt returns an AST statement for handing function results.
+func getHandleResultStmt(errName string) astm.Stmt <span class="cov8" title="1">{
+        return astm.GetExprStmt(
+                astm.GetCallExpr(
+                        astm.GetNameExpr(templateModels.HandleResult),
+                        astm.Exprs{
+                                models.WToken.AstExpr(),
+                                astm.GetNameExpr(errName),
+                                models.ResultValueToken.AstExpr(),
+                        },
+                ),
+        )
+}</span>
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package models
+
+import (
+        astm "github.com/KianIt/swag2api/builder/ast/models"
+)
+
+// Token is a source code token.
+//
+// Token is used to add a particular piece of
+// source code to the AST.
+type Token string
+
+const (
+        MuxToken                Token = "_mux"
+        HandlerToken            Token = "http.Handler"
+        NewMuxToken             Token = "http.NewServeMux"
+        HandleFuncToken         Token = "HandleFunc"
+        InitToken               Token = "init"
+        WToken                  Token = "w"
+        WriterToken             Token = "http.ResponseWriter"
+        RToken                  Token = "r"
+        RequestToken            Token = "*http.Request"
+        PathValueGetToken       Token = "r.PathValue"
+        QueryValueGetToken      Token = "r.URL.Query().Get"
+        UnmarshalErrSuffixToken Token = "UnmarshalErr"
+        BodyToken               Token = "_body"
+        BodyGetToken            Token = "io.ReadAll(r.Body)"
+        BodyReadErrToken        Token = "_bodyReadErr"
+        BodyTypeToken           Token = "_bodyType"
+        BodyValueToken          Token = "_bodyValue"
+        ResultTypeToken         Token = "_resultType"
+        ResultValueToken        Token = "_resultValue"
+        ErrToken                Token = "err"
+        NilToken                Token = "nil"
+        ReturnToken             Token = "return"
+        InlineFieldToken        Token = "`json:\",inline\"`"
+        StatusOkToken           Token = "http.StatusOK"
+        StatusOkTextToken       Token = "http.StatusText(http.StatusOK)"
+)
+
+// AstExpr returns the token as an AST expression.
+func (t Token) AstExpr() astm.Expr <span class="cov8" title="1">{
+        return astm.GetNameExpr(string(t))
+}</span>
+
+// String returns the token as a string.
+func (t Token) String() string <span class="cov8" title="1">{
+        return string(t)
+}</span>
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package main
+
+import (
+        "flag"
+        "log"
+
+        "github.com/KianIt/swag2api"
+)
+
+const (
+        defaultPkgPath     = "."
+        defaultMainFile    = "main.go"
+        defaultAPIFile     = "generated.go"
+        defaultHandlerName = "s2aHandler"
+)
+
+var (
+        pkgPath     *string
+        mainFile    *string
+        apiFile     *string
+        handlerName *string
+)
+
+func initFlags() <span class="cov0" title="0">{
+        pkgPath = flag.String("pkg", defaultPkgPath, "Path to the Golang package")
+        mainFile = flag.String("main", defaultMainFile, "Name of the swag main file")
+        apiFile = flag.String("to", defaultAPIFile, "Name of the generated API file")
+        handlerName = flag.String("handler", defaultHandlerName, "Name of the API HTTP handler")
+        flag.Parse()
+}</span>
+
+func main() <span class="cov0" title="0">{
+        initFlags()
+
+        if err := swag2api.Generate(*pkgPath, *mainFile, *apiFile, *handlerName); err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("swag2api error: %v", err)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">// Code generated by swag2api v1.0.0. DO NOT EDIT.
+package main
+
+import (
+        "encoding/json"
+        "fmt"
+        "io"
+        "net/http"
+
+        "github.com/KianIt/swag2api/example/models"
+)
+
+type _errorResponse struct {
+        Error string `json:"error"`
+}
+
+func _unmarshalString[T any](value string) (buf T, err error) <span class="cov0" title="0">{
+        return _unmarshalBytes[T]([]byte(value))
+}</span>
+func _unmarshalBytes[T any](value []byte) (buf T, err error) <span class="cov0" title="0">{
+        if err = json.Unmarshal(value, &amp;buf); err != nil </span><span class="cov0" title="0">{
+                return buf, fmt.Errorf("unmarshal: %w", err)
+        }</span>
+        <span class="cov0" title="0">return buf, nil</span>
+}
+func _handleBadRequest(w http.ResponseWriter, err error) <span class="cov0" title="0">{
+        var (
+                code = http.StatusBadRequest
+                msg  = http.StatusText(http.StatusBadRequest)
+        )
+        if err != nil </span><span class="cov0" title="0">{
+                msg = err.Error()
+        }</span>
+        <span class="cov0" title="0">response := _errorResponse{Error: msg}
+        _writeResponse(w, code, response)</span>
+}
+func _handleResult(w http.ResponseWriter, err error, response any) <span class="cov0" title="0">{
+        if err == nil </span><span class="cov0" title="0">{
+                _writeResponse(w, http.StatusOK, response)
+                return
+        }</span>
+        <span class="cov0" title="0">if cu, ok := err.(interface {
+                Code() int
+                Unwrap() error
+        }); ok </span><span class="cov0" title="0">{
+                if e := cu.Unwrap(); e != nil </span><span class="cov0" title="0">{
+                        _writeResponse(w, cu.Code(), _errorResponse{Error: e.Error()})
+                }</span> else<span class="cov0" title="0"> if response == nil </span><span class="cov0" title="0">{
+                        _writeResponse(w, cu.Code(), _errorResponse{Error: http.StatusText(cu.Code())})
+                }</span> else<span class="cov0" title="0"> {
+                        _writeResponse(w, cu.Code(), response)
+                }</span>
+                <span class="cov0" title="0">return</span>
+        }
+        <span class="cov0" title="0">_writeResponse(w, http.StatusInternalServerError, _errorResponse{Error: err.Error()})</span>
+}
+func _writeResponse(w http.ResponseWriter, code int, response any) <span class="cov0" title="0">{
+        w.Header().Set("Content-Type", "application/json; charset=utf-8")
+        w.WriteHeader(code)
+        _ = json.NewEncoder(w).Encode(response)
+}</span>
+func _handler_method1(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        pathStringPath := r.PathValue("pathString")
+        pathString, pathStringUnmarshalErr := _unmarshalString[string](pathStringPath)
+        if pathStringUnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, pathStringUnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">pathIntPath := r.PathValue("pathInt")
+        pathInt, pathIntUnmarshalErr := _unmarshalString[int](pathIntPath)
+        if pathIntUnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, pathIntUnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">pathFloat64Path := r.PathValue("pathFloat64")
+        pathFloat64, pathFloat64UnmarshalErr := _unmarshalString[float64](pathFloat64Path)
+        if pathFloat64UnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, pathFloat64UnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">pathBoolPath := r.PathValue("pathBool")
+        pathBool, pathBoolUnmarshalErr := _unmarshalString[bool](pathBoolPath)
+        if pathBoolUnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, pathBoolUnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">pathBytesPath := r.PathValue("pathBytes")
+        pathBytes, pathBytesUnmarshalErr := _unmarshalString[[]byte](pathBytesPath)
+        if pathBytesUnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, pathBytesUnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">result, err := method1(pathString, pathInt, pathFloat64, pathBool, pathBytes)
+        type _resultType struct {
+                Result string `json:"result"`
+        }
+        _resultValue := _resultType{Result: result}
+        _handleResult(w, err, _resultValue)</span>
+}
+func _handler_method10(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        result, err := method10()
+        type _resultType struct {
+                Result string `json:"result"`
+        }
+        _resultValue := _resultType{Result: result}
+        _handleResult(w, err, _resultValue)
+}</span>
+func _handler_method2(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        queryStringQuery := r.URL.Query().Get("queryString")
+        queryString, queryStringUnmarshalErr := _unmarshalString[string](queryStringQuery)
+        if queryStringUnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, queryStringUnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">queryIntQuery := r.URL.Query().Get("queryInt")
+        queryInt, queryIntUnmarshalErr := _unmarshalString[int](queryIntQuery)
+        if queryIntUnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, queryIntUnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">queryFloat64Query := r.URL.Query().Get("queryFloat64")
+        queryFloat64, queryFloat64UnmarshalErr := _unmarshalString[float64](queryFloat64Query)
+        if queryFloat64UnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, queryFloat64UnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">queryBoolQuery := r.URL.Query().Get("queryBool")
+        queryBool, queryBoolUnmarshalErr := _unmarshalString[bool](queryBoolQuery)
+        if queryBoolUnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, queryBoolUnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">queryBytesQuery := r.URL.Query().Get("queryBytes")
+        queryBytes, queryBytesUnmarshalErr := _unmarshalString[[]byte](queryBytesQuery)
+        if queryBytesUnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, queryBytesUnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">_, err := method2(queryString, queryInt, queryFloat64, queryBool, queryBytes)
+        type _resultType struct {
+        }
+        _resultValue := _resultType{}
+        _handleResult(w, err, _resultValue)</span>
+}
+func _handler_method3(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        _body, _bodyReadErr := io.ReadAll(r.Body)
+        if _bodyReadErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, _bodyReadErr)
+                return
+        }</span>
+        <span class="cov0" title="0">type _bodyType struct {
+                BodyString  string  `json:"bodyString"`
+                BodyInt     int     `json:"bodyInt"`
+                BodyFloat64 float64 `json:"bodyFloat64"`
+                BodyBool    bool    `json:"bodyBool"`
+                BodyBytes   []byte  `json:"bodyBytes"`
+        }
+        _bodyValue, _bodyValueUnmarshalErr := _unmarshalBytes[_bodyType](_body)
+        if _bodyValueUnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, _bodyValueUnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">result, _ := method3(_bodyValue.BodyString, _bodyValue.BodyInt, _bodyValue.BodyFloat64, _bodyValue.BodyBool, _bodyValue.BodyBytes)
+        type _resultType struct {
+                Result string `json:"result"`
+        }
+        _resultValue := _resultType{Result: result}
+        _handleResult(w, nil, _resultValue)</span>
+}
+func _handler_method4(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        pathStringPath := r.PathValue("pathString")
+        pathString, pathStringUnmarshalErr := _unmarshalString[string](pathStringPath)
+        if pathStringUnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, pathStringUnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">queryStringQuery := r.URL.Query().Get("queryString")
+        queryString, queryStringUnmarshalErr := _unmarshalString[string](queryStringQuery)
+        if queryStringUnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, queryStringUnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">_body, _bodyReadErr := io.ReadAll(r.Body)
+        if _bodyReadErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, _bodyReadErr)
+                return
+        }</span>
+        <span class="cov0" title="0">bodyString, bodyStringUnmarshalErr := _unmarshalBytes[string](_body)
+        if bodyStringUnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, bodyStringUnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">res0, res1 := method4(pathString, queryString, bodyString)
+        type _resultType struct {
+                Res0 string `json:"res0"`
+        }
+        _resultValue := _resultType{Res0: res0}
+        _handleResult(w, res1, _resultValue)</span>
+}
+func _handler_method5(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        _body, _bodyReadErr := io.ReadAll(r.Body)
+        if _bodyReadErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, _bodyReadErr)
+                return
+        }</span>
+        <span class="cov0" title="0">bodyMap, bodyMapUnmarshalErr := _unmarshalBytes[map[string][]map[string]int](_body)
+        if bodyMapUnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, bodyMapUnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">result, Error := method5(bodyMap)
+        type _resultType struct {
+                Result string `json:"result"`
+        }
+        _resultValue := _resultType{Result: result}
+        _handleResult(w, Error, _resultValue)</span>
+}
+func _handler_method6(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        field1Query := r.URL.Query().Get("field1")
+        field1, field1UnmarshalErr := _unmarshalString[string](field1Query)
+        if field1UnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, field1UnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">field2Query := r.URL.Query().Get("field2")
+        field2, field2UnmarshalErr := _unmarshalString[int](field2Query)
+        if field2UnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, field2UnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">field3Query := r.URL.Query().Get("field3")
+        field3, field3UnmarshalErr := _unmarshalString[float64](field3Query)
+        if field3UnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, field3UnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">field4Query := r.URL.Query().Get("field4")
+        field4, field4UnmarshalErr := _unmarshalString[bool](field4Query)
+        if field4UnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, field4UnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">field5Query := r.URL.Query().Get("field5")
+        field5, field5UnmarshalErr := _unmarshalString[[]byte](field5Query)
+        if field5UnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, field5UnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">code, err := method6(field1, field2, field3, field4, field5)
+        type _resultType struct {
+                Code int `json:"code"`
+        }
+        _resultValue := _resultType{Code: code}
+        _handleResult(w, err, _resultValue)</span>
+}
+func _handler_method7(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        _body, _bodyReadErr := io.ReadAll(r.Body)
+        if _bodyReadErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, _bodyReadErr)
+                return
+        }</span>
+        <span class="cov0" title="0">type _bodyType struct {
+                BodyModel     ThisPackageModel                      `json:"bodyModel"`
+                BodyModelList []ThisPackageModel                    `json:"bodyModelList"`
+                BodyModelMap  map[string]models.AnotherPackageModel `json:"bodyModelMap"`
+        }
+        _bodyValue, _bodyValueUnmarshalErr := _unmarshalBytes[_bodyType](_body)
+        if _bodyValueUnmarshalErr != nil </span><span class="cov0" title="0">{
+                _handleBadRequest(w, _bodyValueUnmarshalErr)
+                return
+        }</span>
+        <span class="cov0" title="0">code, err := method7(_bodyValue.BodyModel, _bodyValue.BodyModelList, _bodyValue.BodyModelMap)
+        type _resultType struct {
+                Code int `json:"code"`
+        }
+        _resultValue := _resultType{Code: code}
+        _handleResult(w, err, _resultValue)</span>
+}
+func _handler_method8(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        result, err := method8()
+        type _resultType struct {
+                Result string `json:"result"`
+        }
+        _resultValue := _resultType{Result: result}
+        _handleResult(w, err, _resultValue)
+}</span>
+func _handler_method9(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        result, err := method9()
+        type _resultType struct {
+                Result string `json:"result"`
+        }
+        _resultValue := _resultType{Result: result}
+        _handleResult(w, err, _resultValue)
+}</span>
+func init() <span class="cov0" title="0">{
+        _mux := http.NewServeMux()
+        _mux.HandleFunc("GET /path-to-method1", _handler_method1)
+        _mux.HandleFunc("GET /path-to-method10", _handler_method10)
+        _mux.HandleFunc("POST /path-to-method2", _handler_method2)
+        _mux.HandleFunc("PUT /path-to-method3", _handler_method3)
+        _mux.HandleFunc("DELETE /path-to-method4", _handler_method4)
+        _mux.HandleFunc("OPTIONS /path-to-method5", _handler_method5)
+        _mux.HandleFunc("HEAD /path-to-method6", _handler_method6)
+        _mux.HandleFunc("PATCH /path-to-method7", _handler_method7)
+        _mux.HandleFunc("GET /path-to-method8", _handler_method8)
+        _mux.HandleFunc("GET /path-to-method9", _handler_method9)
+        s2aHandler = _mux
+}</span>
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">//go:generate go run ../cmd/swag2api -handler=s2aHandler
+package main
+
+import (
+        "bytes"
+        "context"
+        "errors"
+        "fmt"
+        "io"
+        "log"
+        "net/http"
+        "os"
+        "os/signal"
+        "syscall"
+        "time"
+)
+
+// @title swag2api example documntation
+// @version 1.0
+
+const (
+        shutdownTimeout = 10 * time.Second
+        readTimeout     = 5 * time.Second
+        WriteTimeout    = 10 * time.Second
+)
+
+var s2aHandler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) <span class="cov0" title="0">{
+        w.Header().Set("Content-Type", "text/plain")
+        w.WriteHeader(http.StatusNotImplemented)
+        _, _ = w.Write([]byte("Server API not generated"))
+}</span>)
+
+func main() <span class="cov0" title="0">{
+        server := createServer(":8080")
+
+        if err := runServer(context.Background(), server, shutdownTimeout); err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("Server error: %v", err)
+        }</span>
+}
+
+func createServer(port string) *http.Server <span class="cov0" title="0">{
+        return &amp;http.Server{
+                Addr:         port,
+                ReadTimeout:  readTimeout,
+                WriteTimeout: WriteTimeout,
+                Handler:      loggingMiddleware(s2aHandler),
+        }
+}</span>
+
+func loggingMiddleware(next http.Handler) http.Handler <span class="cov0" title="0">{
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                var (
+                        body []byte
+                        err  error
+                )
+                if body, err = io.ReadAll(r.Body); err != nil </span><span class="cov0" title="0">{
+                        w.WriteHeader(http.StatusBadRequest)
+                        return
+                }</span>
+                <span class="cov0" title="0">r.Body = io.NopCloser(bytes.NewBuffer(body))
+
+                log.Printf("HTTP Request from: %s, to: %s, method: %s, body: %s", r.RemoteAddr, r.URL.Path, r.Method, string(body))
+
+                next.ServeHTTP(w, r)</span>
+        })
+}
+
+func runServer(ctx context.Context, server *http.Server, shutdownTimeout time.Duration) error <span class="cov0" title="0">{
+        errChan := make(chan error, 1)
+
+        go func() </span><span class="cov0" title="0">{
+                log.Printf("Server listening at %s\n", server.Addr)
+                if err := server.ListenAndServe(); err != nil &amp;&amp; !errors.Is(err, http.ErrServerClosed) </span><span class="cov0" title="0">{
+                        errChan &lt;- err
+                }</span>
+                <span class="cov0" title="0">close(errChan)</span>
+        }()
+
+        <span class="cov0" title="0">stop := make(chan os.Signal, 1)
+        signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+
+        select </span>{
+        case err := &lt;-errChan:<span class="cov0" title="0">
+                return fmt.Errorf("listening error: %w", err)</span>
+        case &lt;-stop:<span class="cov0" title="0">
+                log.Println("Server shutdown signal received")</span>
+        case &lt;-ctx.Done():<span class="cov0" title="0">
+                log.Println("Context canceled, shutting down server")</span>
+        }
+
+        <span class="cov0" title="0">shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+        defer cancel()
+
+        if err := server.Shutdown(shutdownCtx); err != nil </span><span class="cov0" title="0">{
+                if closeErr := server.Close(); closeErr != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("closing error: %w", closeErr)
+                }</span>
+                <span class="cov0" title="0">return fmt.Errorf("shutdown error: %w", err)</span>
+        }
+
+        <span class="cov0" title="0">log.Println("Server shutdown gracefully")
+
+        return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package main
+
+import (
+        "errors"
+        "net/http"
+
+        "github.com/KianIt/swag2api/example/models"
+        s2aStatuses "github.com/KianIt/swag2api/statuses"
+)
+
+type ThisPackageModel struct {
+        Field1 string  `json:"field1"`
+        Field2 int     `json:"field2"`
+        Field3 float64 `json:"field3"`
+        Field4 bool    `json:"field4"`
+        Field5 []byte  `json:"field5"`
+}
+
+// method1 godoc
+// @ID method1
+// @Param pathString path string true " "
+// @Param pathInt path int true " "
+// @Param pathFloat64 path float64 true " "
+// @Param pathBool path bool true " "
+// @Param pathBytes path []byte true " "
+// @Router /path-to-method1 [get]
+func method1(pathString string, pathInt int, pathFloat64 float64, pathBool bool, pathBytes []byte) (result string, err error) <span class="cov0" title="0">{
+        return "success", nil
+}</span>
+
+// method2 godoc
+// @ID method2
+// @Param queryString query string true " "
+// @Param queryInt query int true " "
+// @Param queryFloat64 query float64 true " "
+// @Param queryBool query bool true " "
+// @Param queryBytes query []byte true " "
+// @Router /path-to-method2 [post]
+func method2(queryString string, queryInt int, queryFloat64 float64, queryBool bool, queryBytes []byte) (_ string, err error) <span class="cov0" title="0">{
+        return "success", nil
+}</span>
+
+// method3 godoc
+// @ID method3
+// @Param bodyString body string true " "
+// @Param bodyInt body int true " "
+// @Param bodyFloat64 body float64 true " "
+// @Param bodyBool body bool true " "
+// @Param bodyBytes body []byte true " "
+// @Router /path-to-method3 [put]
+func method3(bodyString string, bodyInt int, bodyFloat64 float64, bodyBool bool, bodyBytes []byte) (result string, _ error) <span class="cov0" title="0">{
+        return "success", nil
+}</span>
+
+// method4 godoc
+// @ID method4
+// @Param pathString path string true " "
+// @Param queryString query string true " "
+// @Param bodyString body string true " "
+// @Router /path-to-method4 [delete]
+func method4(pathString, queryString, bodyString string) (string, error) <span class="cov0" title="0">{
+        return "success", nil
+}</span>
+
+// method5 godoc
+// @ID method5
+// @Param bodyMap body map[string][]map[string]int true " "
+// @Router /path-to-method5 [options]
+func method5(bodyMap map[string][]map[string]int) (result string, Error error) <span class="cov0" title="0">{
+        return "success", nil
+}</span>
+
+// method6 godoc
+// @ID method6
+// @Param queryModel query ThisPackageModel true " "
+// @Router /path-to-method6 [head]
+func method6(field1 string, field2 int, field3 float64, field4 bool, field5 []byte) (code int, err error) <span class="cov0" title="0">{
+        return http.StatusOK, nil
+}</span>
+
+// method7 godoc
+// @ID method7
+// @Param bodyModel body ThisPackageModel true " "
+// @Param bodyModelList body []ThisPackageModel true " "
+// @Param bodyModelMap body map[string]models.AnotherPackageModel true " "
+// @Router /path-to-method7 [patch]
+func method7(bodyModel ThisPackageModel, bodyModelList []ThisPackageModel, bodyModelMap map[string]models.AnotherPackageModel) (code int, err error) <span class="cov0" title="0">{
+        return http.StatusOK, nil
+}</span>
+
+// method8 godoc
+// @ID method8
+// @Router /path-to-method8 [get]
+func method8() (result string, err error) <span class="cov0" title="0">{
+        return "success", s2aStatuses.NotFoundError(nil)
+}</span>
+
+// method9 godoc
+// @ID method9
+// @Router /path-to-method9 [get]
+func method9() (result string, err error) <span class="cov0" title="0">{
+        return "failed", s2aStatuses.NotFoundError(errors.New("test error"))
+}</span>
+
+// method10 godoc
+// @ID method10
+// @Router /path-to-method10 [get]
+func method10() (result string, err error) <span class="cov0" title="0">{
+        return "failed", s2aStatuses.NotFoundError(errors.New("test error"))
+}</span>
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package swag2api
+
+import (
+        "fmt"
+        "log"
+        "path"
+
+        "github.com/KianIt/swag2api/builder"
+        parserwrapper "github.com/KianIt/swag2api/parser/parser-wrapper"
+        "github.com/KianIt/swag2api/validator"
+)
+
+// Generate is an entry point for the API generation.
+//
+// It parses information from swag annotations and source code
+// and uses it to build the API.
+//
+// On the validation stage it checks that
+// the source code directory exists,
+// the swag main file exists, and
+// the generated API file doesn't exists (deletes if existed).
+//
+// On the parsing stage it reads the function definitions
+// from the source code and joins them with the corresponding
+// swag annotations to obtain the complete information
+// about the functions and the future API.
+//
+// On the building stage it uses the parsing information
+// to generate HTTP handlers for all the annotated function,
+// every function handler uses an HTTP request to properly call
+// the annotated function and return its results.
+// All the function handlers are available via a
+// signle HTTP handler that dispatches requests to the API.
+//
+// Params:
+//   - pkgPath: path to the source code directory;
+//   - mainFile: name of the swag main file;
+//   - apiFile: name of the generated API file;
+//   - handlerName: name of the API HTTP handler.
+func Generate(pkgPath, mainFile, apiFile, handlerName string) error <span class="cov0" title="0">{
+        log.Printf("Generating API from '%s' into '%s' with HTTP handler '%s'", pkgPath, apiFile, handlerName)
+
+        if err := validator.ValidatePkg(pkgPath); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("pkg: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">mainPath := path.Join(pkgPath, mainFile)
+        if err := validator.ValidateMainFile(mainPath); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("main file: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">apiPath := path.Join(pkgPath, apiFile)
+        if err := validator.ValidateAPIFile(apiPath); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("API file: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">p := parserwrapper.NewParserWrapper()
+        if err := p.Parse(pkgPath, mainFile, handlerName); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("parsing: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">if err := builder.NewBuilder(p.GetInfo()).Build(apiPath); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("building: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">log.Printf("API generated successfully")
+
+        return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file16" style="display: none">package models
+
+import "fmt"
+
+// Endpoint is a description of a function HTTP endpoint.
+type Endpoint struct {
+        Method string
+        Path   string
+}
+
+// HandlerPath returns the endpoint's method and path as a string.
+func (e Endpoint) HandlerPath() string <span class="cov8" title="1">{
+        return fmt.Sprintf("%s %s", e.Method, e.Path)
+}</span>
+</pre>
+		
+		<pre class="file" id="file17" style="display: none">package models
+
+import (
+        "fmt"
+        "strconv"
+        "unicode"
+)
+
+// Field is a named field of a specific type.
+type Field struct {
+        Name     string
+        TypeExpr string
+}
+
+// IsError checks if the field is an error.
+func (f Field) IsError() bool <span class="cov8" title="1">{
+        return f.TypeExpr == "error"
+}</span>
+
+// NameCapitalized returns the field's name with the first letter uppercased.
+func (f Field) NameCapitalized() string <span class="cov8" title="1">{
+        if len(f.Name) &gt; 0 </span><span class="cov8" title="1">{
+                return string(unicode.ToTitle(rune(f.Name[0]))) + f.Name[1:]
+        }</span>
+        <span class="cov8" title="1">return ""</span>
+}
+
+// JSONTag returns the field's JSON tag.
+func (f Field) JSONTag() string <span class="cov8" title="1">{
+        return fmt.Sprintf("`json:%s`", strconv.Quote(f.Name))
+}</span>
+</pre>
+		
+		<pre class="file" id="file18" style="display: none">package models
+
+import "fmt"
+
+// Function is the comlete infomation about a function and a corresponding HTTP endpoint.
+type Function struct {
+        Name     string
+        Params   Params
+        Results  Results
+        Endpoint Endpoint
+}
+
+// HandlerName returns the function's endpoint handler name.
+func (f Function) HandlerName() string <span class="cov8" title="1">{
+        return fmt.Sprintf("_handler_%s", f.Name)
+}</span>
+
+// Functions is a list of Function.
+type Functions []Function
+
+// Map returns a map of Function by their names.
+func (fs Functions) Map() map[string]Function <span class="cov8" title="1">{
+        fMap := make(map[string]Function)
+
+        for _, f := range fs </span><span class="cov8" title="1">{
+                fMap[f.Name] = f
+        }</span>
+
+        <span class="cov8" title="1">return fMap</span>
+}
+</pre>
+		
+		<pre class="file" id="file19" style="display: none">package models
+
+import (
+        "fmt"
+        "strconv"
+)
+
+// Import is a description of a single Golang import.
+type Import struct {
+        Path  string
+        Alias string
+}
+
+// Render returns the import's source code form as a string.
+func (i Import) Render() string <span class="cov8" title="1">{
+        return fmt.Sprintf("%s %s", i.Alias, strconv.Quote(i.Path))
+}</span>
+</pre>
+		
+		<pre class="file" id="file20" style="display: none">package models
+
+import (
+        "fmt"
+        "strings"
+)
+
+// Param is a param of a function.
+type Param struct {
+        Field
+
+        Type   ParamType
+        Origin ParamOrigin
+}
+
+// NameOrigin returns the param's name joined with its origin.
+func (p Param) NameOrigin() string <span class="cov8" title="1">{
+        return p.Name + string(p.Origin)
+}</span>
+
+// Params is a list of Param.
+type Params []Param
+
+// Map returns a map of Param by name.
+func (ps Params) Map() map[string]Param <span class="cov8" title="1">{
+        pMap := make(map[string]Param)
+
+        for _, p := range ps </span><span class="cov8" title="1">{
+                pMap[p.Name] = p
+        }</span>
+
+        <span class="cov8" title="1">return pMap</span>
+}
+
+// ParamType is a type of Param.
+type ParamType string
+
+// Is checks if the param type equals to another type or is more specific.
+func (pt ParamType) Is(paramType ParamType) bool <span class="cov8" title="1">{
+        return strings.Contains(string(pt), string(paramType))
+}</span>
+
+// MapOf returns a new map type with values of the current type.
+func (pt ParamType) MapOf() ParamType <span class="cov8" title="1">{
+        return Map + "[]" + pt
+}</span>
+
+// SliceOf returns a new slice type with values of the current type.
+func (pt ParamType) SliceOf() ParamType <span class="cov8" title="1">{
+        return Slice + "[]" + pt
+}</span>
+
+// CustomOf returns a new custom type that equals to the current type.
+func (pt ParamType) CustomOf() ParamType <span class="cov8" title="1">{
+        return Custom + "[]" + pt
+}</span>
+
+const (
+        Int    ParamType = "int"
+        Float  ParamType = "float"
+        String ParamType = "string"
+        Bool   ParamType = "bool"
+        Error  ParamType = "error"
+        Any    ParamType = "any"
+        Map    ParamType = "map"
+        Slice  ParamType = "slice"
+        Custom ParamType = "custom"
+)
+
+// ParamOrigin is an origin of Param.
+type ParamOrigin string
+
+const (
+        Path  ParamOrigin = "Path"
+        Query ParamOrigin = "Query"
+        Body  ParamOrigin = "Body"
+)
+
+// GetParamOrigin parses a param origin from string.
+func GetParamOrigin(originName string) (ParamOrigin, error) <span class="cov8" title="1">{
+        switch originName </span>{
+        case "path":<span class="cov8" title="1">
+                return Path, nil</span>
+        case "query":<span class="cov8" title="1">
+                return Query, nil</span>
+        case "body":<span class="cov8" title="1">
+                return Body, nil</span>
+        default:<span class="cov8" title="1">
+                return "", fmt.Errorf("unsupported param origin: '%s'", originName)</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file21" style="display: none">package annot
+
+import (
+        "errors"
+        "fmt"
+        "log"
+        "net/http"
+        "path"
+        "sort"
+
+        "github.com/go-openapi/spec"
+        "github.com/swaggo/swag"
+
+        s2aModels "github.com/KianIt/swag2api/models"
+)
+
+const (
+        parseFlags = swag.ParseAll
+        parseDepth = 100
+)
+
+// Parser is a swag annotations parser.
+//
+// Uses the swag.Parser to parse the annotations.
+type Parser struct {
+        swag  *swag.Parser
+        Funcs s2aModels.Functions
+}
+
+// NewAnnotParser returns a new swag annotations parser.
+func NewAnnotParser() *Parser <span class="cov8" title="1">{
+        return &amp;Parser{
+                swag:  swag.New(swag.SetParseDependency(parseFlags)),
+                Funcs: make(s2aModels.Functions, 0),
+        }
+}</span>
+
+// Parse runs parsing.
+//
+// Runs the swag.Parser and uses its results to obtain
+// information about functions.
+func (p *Parser) Parse(pkgPath, mainFile string) error <span class="cov8" title="1">{
+        log.Printf("Parsing swag annotations from '%s'", pkgPath)
+
+        if err := p.swag.ParseAPI(pkgPath, mainFile, parseDepth); err != nil </span><span class="cov8" title="1">{
+                return fmt.Errorf("swag: %w", err)
+        }</span>
+
+        // Parsing every method of every path.
+        <span class="cov8" title="1">for path, item := range p.swag.GetSwagger().Paths.Paths </span><span class="cov8" title="1">{
+                if err := p.parsePath(path, item); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("path '%s': %w", path, err)
+                }</span>
+        }
+
+        <span class="cov8" title="1">sort.Slice(p.Funcs, func(i, j int) bool </span><span class="cov8" title="1">{ return p.Funcs[i].Name &lt; p.Funcs[j].Name }</span>)
+
+        <span class="cov8" title="1">log.Printf("Swag annotations parsed succesfully")
+
+        return nil</span>
+}
+
+// parsePath parses path information.
+func (p *Parser) parsePath(path string, item spec.PathItem) error <span class="cov8" title="1">{
+        if item.Get != nil </span><span class="cov8" title="1">{
+                if err := p.parseMethod(http.MethodGet, path, item.Get); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("%s: %w", http.MethodGet, err)
+                }</span>
+        }
+
+        <span class="cov8" title="1">if item.Post != nil </span><span class="cov0" title="0">{
+                if err := p.parseMethod(http.MethodPost, path, item.Post); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("%s: %w", http.MethodPost, err)
+                }</span>
+        }
+
+        <span class="cov8" title="1">if item.Put != nil </span><span class="cov0" title="0">{
+                if err := p.parseMethod(http.MethodPut, path, item.Put); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("%s: %w", http.MethodPut, err)
+                }</span>
+        }
+
+        <span class="cov8" title="1">if item.Patch != nil </span><span class="cov8" title="1">{
+                if err := p.parseMethod(http.MethodPatch, path, item.Patch); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("%s: %w", http.MethodPatch, err)
+                }</span>
+        }
+
+        <span class="cov8" title="1">if item.Delete != nil </span><span class="cov0" title="0">{
+                if err := p.parseMethod(http.MethodDelete, path, item.Delete); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("%s: %w", http.MethodDelete, err)
+                }</span>
+        }
+
+        <span class="cov8" title="1">if item.Options != nil </span><span class="cov0" title="0">{
+                if err := p.parseMethod(http.MethodOptions, path, item.Options); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("%s: %w", http.MethodOptions, err)
+                }</span>
+        }
+
+        <span class="cov8" title="1">if item.Head != nil </span><span class="cov0" title="0">{
+                if err := p.parseMethod(http.MethodHead, path, item.Head); err != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("%s: %w", http.MethodHead, err)
+                }</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// parseMethod parses method information.
+func (p *Parser) parseMethod(method, path string, op *spec.Operation) error <span class="cov8" title="1">{
+        if op == nil </span><span class="cov8" title="1">{
+                return errors.New("op is nil")
+        }</span>
+
+        <span class="cov8" title="1">if op.ID == "" </span><span class="cov0" title="0">{
+                return errors.New("ID is empty")
+        }</span>
+
+        <span class="cov8" title="1">log.Printf("Parsing function '%s' (%s %s)", op.ID, method, path)
+
+        params, err := parameters2Params(op.Parameters)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("parameters: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">p.Funcs = append(p.Funcs, s2aModels.Function{
+                Name:   op.ID,
+                Params: params,
+                Endpoint: s2aModels.Endpoint{
+                        Method: method,
+                        Path:   path,
+                },
+        })
+
+        return nil</span>
+}
+
+// parameters2Params converts a list of spec.Parameter into a s2aModels.Params.
+func parameters2Params(parameters []spec.Parameter) (s2aModels.Params, error) <span class="cov8" title="1">{
+        params := make(s2aModels.Params, 0, len(parameters))
+
+        for _, parameter := range parameters </span><span class="cov8" title="1">{
+                param, err := parameter2Param(parameter)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("parameter '%s': %w", parameter.Name, err)
+                }</span>
+
+                <span class="cov8" title="1">params = append(params, param)</span>
+        }
+
+        <span class="cov8" title="1">return params, nil</span>
+}
+
+// parameters2Params converts a spec.Parameter into a s2aModels.Param.
+func parameter2Param(parameter spec.Parameter) (s2aModels.Param, error) <span class="cov8" title="1">{
+        paramOrigin, err := s2aModels.GetParamOrigin(parameter.In)
+        if err != nil </span><span class="cov8" title="1">{
+                return s2aModels.Param{}, fmt.Errorf("origin: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">paramType, err := getParamType(parameter)
+        if err != nil </span><span class="cov8" title="1">{
+                return s2aModels.Param{}, fmt.Errorf("type: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">param := s2aModels.Param{
+                Field: s2aModels.Field{
+                        Name: parameter.Name,
+                },
+                Type:   paramType,
+                Origin: paramOrigin,
+        }
+
+        return param, nil</span>
+}
+
+// getParamType parses a s2aModels.ParamType from a spec.Parameter.
+//
+// Uses data from the parameter schema if the parameter type is given.
+// Otherwise constructs a custom schema from parameter data and uses it.
+func getParamType(parameter spec.Parameter) (s2aModels.ParamType, error) <span class="cov8" title="1">{
+        var schema *spec.Schema
+
+        if parameter.Type == "" </span><span class="cov8" title="1">{
+                schema = parameter.Schema
+        }</span> else<span class="cov8" title="1"> {
+                var (
+                        items                *spec.SchemaOrArray
+                        additionalProperties *spec.SchemaOrBool
+                )
+
+                if parameter.Schema != nil </span><span class="cov0" title="0">{
+                        items = parameter.Schema.Items
+                        additionalProperties = parameter.Schema.AdditionalProperties
+                }</span>
+
+                <span class="cov8" title="1">schema = &amp;spec.Schema{
+                        SchemaProps: spec.SchemaProps{
+                                Type:                 spec.StringOrArray([]string{parameter.Type}),
+                                Items:                items,
+                                AdditionalProperties: additionalProperties,
+                                Format:               parameter.Format,
+                        },
+                }</span>
+        }
+
+        <span class="cov8" title="1">return getSchemaParamType(schema)</span>
+}
+
+// getSchemaParamType parses a s2aModels.ParamType from a *spec.Schema.
+func getSchemaParamType(schema *spec.Schema) (s2aModels.ParamType, error) <span class="cov8" title="1">{
+        if schema == nil </span><span class="cov8" title="1">{
+                return "", errors.New("schema is nil")
+        }</span>
+
+        // If the schema type is not given, then it's a custom or any type.
+        <span class="cov8" title="1">if len(schema.Type) == 0 || schema.Type[0] == "" </span><span class="cov8" title="1">{
+                // Getting the custom type name from the URL.
+                if url := schema.Ref.GetURL(); url != nil </span><span class="cov8" title="1">{
+                        subType := s2aModels.ParamType(path.Base(url.String()))
+
+                        // Returning a custom type.
+                        return subType.CustomOf(), nil
+                }</span>
+
+                <span class="cov8" title="1">return s2aModels.Any, nil</span>
+        }
+
+        // Parsing swag type.
+        <span class="cov8" title="1">var paramType s2aModels.ParamType
+        switch schema.Type[0] </span>{
+        case swag.STRING:<span class="cov8" title="1">
+                paramType = s2aModels.String</span>
+        case swag.BOOLEAN:<span class="cov8" title="1">
+                paramType = s2aModels.Bool</span>
+        case swag.INTEGER:<span class="cov8" title="1">
+                paramType = s2aModels.Int</span>
+        case swag.NUMBER:<span class="cov8" title="1">
+                paramType = s2aModels.Float</span>
+        case swag.ERROR:<span class="cov0" title="0">
+                paramType = s2aModels.Error</span>
+        case swag.INTERFACE, swag.ANY:<span class="cov8" title="1">
+                paramType = s2aModels.Any</span>
+        case swag.ARRAY:<span class="cov8" title="1">
+                // Array is a slice.
+                var (
+                        subType s2aModels.ParamType
+                        err     error
+                )
+
+                // If the items given, trying to get the item type.
+                if schema.Items != nil </span><span class="cov8" title="1">{
+                        subType, err = getSchemaParamType(schema.Items.Schema)
+                        if err != nil </span><span class="cov0" title="0">{
+                                return "", err
+                        }</span>
+                }
+
+                // Returning a slice.
+                <span class="cov8" title="1">paramType = subType.SliceOf()</span>
+        case swag.OBJECT:<span class="cov8" title="1">
+                // Object is a map.
+                var (
+                        subType s2aModels.ParamType
+                        err     error
+                )
+
+                // Trying to get the value type.
+                if schema.AdditionalProperties != nil </span><span class="cov8" title="1">{
+                        subType, err = getSchemaParamType(schema.AdditionalProperties.Schema)
+                        if err != nil </span><span class="cov0" title="0">{
+                                return "", err
+                        }</span>
+                }
+
+                // Returning a map.
+                <span class="cov8" title="1">paramType = subType.MapOf()</span>
+        }
+
+        <span class="cov8" title="1">if paramType != "" </span><span class="cov8" title="1">{
+                return paramType, nil
+        }</span>
+
+        <span class="cov8" title="1">return "", fmt.Errorf("unknown type: '%s'", schema.Type[0])</span>
+}
+</pre>
+		
+		<pre class="file" id="file22" style="display: none">package parserwrapper
+
+import (
+        "fmt"
+        "log"
+
+        s2aModels "github.com/KianIt/swag2api/models"
+        "github.com/KianIt/swag2api/parser/annot"
+        "github.com/KianIt/swag2api/parser/models"
+        "github.com/KianIt/swag2api/parser/source"
+)
+
+// ParserWrapepr is a wrapper for the swag annotations and source code parsers.
+//
+// It uses the both parsers to read the complete information about
+// the annotated functions and the future API.
+type ParserWrapepr struct {
+        annot  *annot.Parser
+        source *source.Parser
+        info   models.ParsingInfo
+}
+
+// NewParserWrapper returns a new Parser.
+func NewParserWrapper() *ParserWrapepr <span class="cov8" title="1">{
+        return &amp;ParserWrapepr{
+                annot:  annot.NewAnnotParser(),
+                source: source.NewSourceParser(),
+        }
+}</span>
+
+// Parse runs parsing.
+//
+// Runs the swag annotations and source code parsers and
+// joins their results into the complete parsing information.
+func (p *ParserWrapepr) Parse(pkgPath, mainFname, handlerName string) error <span class="cov8" title="1">{
+        log.Printf("Parsing started")
+
+        if err := p.annot.Parse(pkgPath, mainFname); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("annot: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">if err := p.source.Parse(pkgPath, handlerName); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("source: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">combinedFuncs, err := p.combineFuncs()
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("combining functions: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">p.info.PkgName = p.source.PkgName
+        p.info.Imports = p.source.Imports
+        p.info.Funcs = combinedFuncs
+        p.info.HTTPHandler = p.source.HTTPHandler
+
+        log.Printf("Parsing finished successfully")
+
+        return nil</span>
+}
+
+// GetInfo returns the complete parsing information.
+func (p *ParserWrapepr) GetInfo() models.ParsingInfo <span class="cov8" title="1">{
+        return p.info
+}</span>
+
+// combineFuncs combines functions from the swag annotations and source code parsers.
+func (p *ParserWrapepr) combineFuncs() (s2aModels.Functions, error) <span class="cov8" title="1">{
+        combinedFuncs := make(s2aModels.Functions, 0, len(p.source.Funcs))
+
+        annotFuncMap := p.annot.Funcs.Map()
+        sourceFuncMap := p.source.Funcs.Map()
+
+        for _, annotFunc := range p.annot.Funcs </span><span class="cov8" title="1">{
+                if _, ok := sourceFuncMap[annotFunc.Name]; !ok </span><span class="cov8" title="1">{
+                        log.Printf("Warning: function '%s' found in annotations and not found in source code", annotFunc.Name)
+                }</span>
+        }
+
+        <span class="cov8" title="1">for _, sourceFunc := range p.source.Funcs </span><span class="cov8" title="1">{
+                if annotFunc, ok := annotFuncMap[sourceFunc.Name]; ok </span><span class="cov8" title="1">{
+                        sourceFunc.Endpoint = annotFunc.Endpoint
+
+                        sourceParams, err := combineParams(sourceFunc.Name, annotFunc.Params, sourceFunc.Params)
+                        if err != nil </span><span class="cov0" title="0">{
+                                return nil, fmt.Errorf("function '%s' params: %w", sourceFunc.Name, err)
+                        }</span>
+                        <span class="cov8" title="1">sourceFunc.Params = sourceParams
+
+                        combinedFuncs = append(combinedFuncs, sourceFunc)</span>
+                }
+        }
+
+        <span class="cov8" title="1">return combinedFuncs, nil</span>
+}
+
+// combineFuncs combines function params from the swag annotations and source code parsers.
+func combineParams(funcName string, annotParams, sourceParams s2aModels.Params) (s2aModels.Params, error) <span class="cov8" title="1">{
+        combinedParams := make(s2aModels.Params, 0, len(sourceParams))
+
+        annotParamMap := annotParams.Map()
+        sourceParamMap := sourceParams.Map()
+
+        for _, annotParam := range annotParams </span><span class="cov8" title="1">{
+                if _, ok := sourceParamMap[annotParam.Name]; !ok </span><span class="cov8" title="1">{
+                        log.Printf("Warning: function '%s' param '%s' found in annotations and not found in source code", funcName, annotParam.Name)
+                }</span>
+        }
+
+        <span class="cov8" title="1">for _, sourceParam := range sourceParams </span><span class="cov8" title="1">{
+                annotParam, ok := annotParamMap[sourceParam.Name]
+                if !ok </span><span class="cov8" title="1">{
+                        return nil, fmt.Errorf("param '%s' found in source code and not found in annotations", sourceParam.Name)
+                }</span> else<span class="cov8" title="1"> if !sourceParam.Type.Is(annotParam.Type) </span><span class="cov8" title="1">{
+                        return nil, fmt.Errorf("param '%s' source code type '%s' isn`t equal to annotation type '%s'", sourceParam.Name, sourceParam.Type, annotParam.Type)
+                }</span>
+
+                <span class="cov8" title="1">sourceParam.Origin = annotParam.Origin
+                combinedParams = append(combinedParams, sourceParam)</span>
+        }
+
+        <span class="cov8" title="1">return combinedParams, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file23" style="display: none">package source
+
+import (
+        "bytes"
+        "errors"
+        "fmt"
+        "go/ast"
+        "go/parser"
+        "go/printer"
+        "go/token"
+        "log"
+        "os"
+        "path/filepath"
+        "sort"
+        "strconv"
+        "strings"
+
+        s2aModels "github.com/KianIt/swag2api/models"
+        "github.com/KianIt/swag2api/parser/models"
+        "github.com/KianIt/swag2api/utils"
+)
+
+// Parser is a source code parser.
+//
+// Uses the built-in AST features to parse the functions.
+// Also parses the main package name, file imports,
+// API HTTP handler information.
+type Parser struct {
+        fs          *token.FileSet
+        PkgName     string
+        Imports     []s2aModels.Import
+        Funcs       s2aModels.Functions
+        HTTPHandler models.HTTPHandlerInfo
+}
+
+// NewSourceParser returns a new source code parser.
+func NewSourceParser() *Parser <span class="cov8" title="1">{
+        return &amp;Parser{
+                fs:      token.NewFileSet(),
+                Imports: make([]s2aModels.Import, 0),
+                Funcs:   make(s2aModels.Functions, 0),
+        }
+}</span>
+
+// Parse runs parsing.
+//
+// Walks over every file in the package (and subpackages)
+// and reads definitions of all the visited functions.
+func (p *Parser) Parse(pkgPath, handlerName string) error <span class="cov8" title="1">{
+        log.Printf("Parsing source code from '%s'", pkgPath)
+
+        p.HTTPHandler.Name = handlerName
+
+        // Getting a file list.
+        files, err := p.parseFiles(pkgPath)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("files: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">sort.Slice(files, func(i, j int) bool </span><span class="cov8" title="1">{ return files[i].Name.Name &lt; files[j].Name.Name }</span>)
+
+        // Parsing every file.
+        <span class="cov8" title="1">for _, file := range files </span><span class="cov8" title="1">{
+                ast.Walk(p, file)
+        }</span>
+
+        <span class="cov8" title="1">sort.Slice(p.Funcs, func(i, j int) bool </span><span class="cov8" title="1">{ return p.Funcs[i].Name &lt; p.Funcs[j].Name }</span>)
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// parseFiles parses the source code package and returns a list of files.
+func (p *Parser) parseFiles(pkgPath string) ([]*ast.File, error) <span class="cov8" title="1">{
+        files := make([]*ast.File, 0)
+
+        if err := filepath.Walk(pkgPath, func(path string, info os.FileInfo, _ error) error </span><span class="cov8" title="1">{
+                // Skipping not Golang source code files.
+                if info.IsDir() || !utils.IsGoSource(info.Name()) </span><span class="cov8" title="1">{
+                        return nil
+                }</span>
+
+                // Parsing a source code file.
+                <span class="cov8" title="1">file, parseErr := parser.ParseFile(p.fs, path, nil, parser.ParseComments)
+                if parseErr != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("file '%s': %w", path, parseErr)
+                }</span>
+
+                // File path relative to packagep path.
+                <span class="cov8" title="1">relPath, pathErr := filepath.Rel(pkgPath, path)
+                if pathErr != nil </span><span class="cov0" title="0">{
+                        return fmt.Errorf("file '%s' rel path: %w", path, pathErr)
+                }</span>
+
+                // If relative path is package root then it's a main package.
+                <span class="cov8" title="1">if p.PkgName == "" &amp;&amp; relPath == filepath.Base(relPath) </span><span class="cov8" title="1">{
+                        p.PkgName = file.Name.Name
+                }</span>
+
+                <span class="cov8" title="1">files = append(files, file)
+
+                return nil</span>
+        }); err != nil <span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return files, nil</span>
+}
+
+// Visit implements the [ast.Visitor] interface.
+//
+// Allows the SourceParser to walk over nodes in a parsed file.
+func (p *Parser) Visit(node ast.Node) ast.Visitor <span class="cov8" title="1">{
+        if node == nil </span><span class="cov8" title="1">{
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">switch decl := node.(type) </span>{
+        case *ast.File:<span class="cov8" title="1">
+                // Skipping files from non-main packages.
+                if decl.Name.Name != p.PkgName </span><span class="cov8" title="1">{
+                        return nil
+                }</span>
+
+                <span class="cov8" title="1">return p</span>
+        case *ast.GenDecl:<span class="cov8" title="1">
+                // Trying to update the HTTP handler information.
+                p.checkHTTPHandler(decl)
+                // Parsing file imports.
+                p.parseImports(decl)
+
+                return p</span>
+        case *ast.FuncDecl:<span class="cov8" title="1">
+                // Parsing a function.
+                if err := p.parseFuncDecl(decl); err != nil </span><span class="cov0" title="0">{
+                        log.Printf("Error: parsing function '%s' declaration failed: %v", decl.Name.Name, err)
+                }</span>
+
+                <span class="cov8" title="1">return nil</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// checkHTTPHandler tries to update the HTTP handler information.
+func (p *Parser) checkHTTPHandler(decl *ast.GenDecl) <span class="cov8" title="1">{
+        if decl == nil || decl.Tok != token.VAR </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">for _, spec := range decl.Specs </span><span class="cov8" title="1">{
+                if valueSpec, ok := spec.(*ast.ValueSpec); ok </span><span class="cov8" title="1">{
+                        for _, ident := range valueSpec.Names </span><span class="cov8" title="1">{
+                                if ident.Name == p.HTTPHandler.Name </span><span class="cov8" title="1">{
+                                        p.HTTPHandler.Exists = true
+                                        return
+                                }</span>
+                        }
+                }
+        }
+}
+
+// parseImports tries to parse file imports.
+func (p *Parser) parseImports(decl *ast.GenDecl) <span class="cov8" title="1">{
+        if decl == nil || decl.Tok != token.IMPORT </span><span class="cov8" title="1">{
+                return
+        }</span>
+
+        <span class="cov8" title="1">for _, spec := range decl.Specs </span><span class="cov8" title="1">{
+                if importSpec, ok := spec.(*ast.ImportSpec); ok </span><span class="cov8" title="1">{
+                        name, err := strconv.Unquote(importSpec.Path.Value)
+                        if err != nil </span><span class="cov8" title="1">{
+                                log.Printf("Error: couldn't unquote import '%s'", importSpec.Path.Value)
+                                continue</span>
+                        }
+
+                        <span class="cov8" title="1">alias := ""
+                        if importSpec.Name != nil </span><span class="cov8" title="1">{
+                                alias = importSpec.Name.Name
+                        }</span>
+
+                        <span class="cov8" title="1">p.Imports = append(p.Imports, s2aModels.Import{
+                                Path:  name,
+                                Alias: alias,
+                        })</span>
+                }
+        }
+}
+
+// parseFuncDecl parsees a function declaration.
+func (p *Parser) parseFuncDecl(decl *ast.FuncDecl) error <span class="cov8" title="1">{
+        if decl == nil </span><span class="cov8" title="1">{
+                return errors.New("declaration is nil")
+        }</span>
+
+        <span class="cov8" title="1">log.Printf("Parsing function '%s'", decl.Name.Name)
+
+        // Params.
+        params, err := p.fieldList2Params(decl.Type.Params)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("params: %w", err)
+        }</span>
+
+        // Results.
+        <span class="cov8" title="1">results, err := p.fieldList2Results(decl.Type.Results)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("results: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">p.Funcs = append(p.Funcs, s2aModels.Function{
+                Name:    decl.Name.Name,
+                Params:  params,
+                Results: results,
+        })
+
+        return nil</span>
+}
+
+// fieldList2Params converts an *[ast.FieldList] into a [s2aModels.Params].
+func (p *Parser) fieldList2Params(fieldList *ast.FieldList) (s2aModels.Params, error) <span class="cov8" title="1">{
+        if fieldList == nil </span><span class="cov8" title="1">{
+                return make(s2aModels.Params, 0), nil
+        }</span>
+
+        <span class="cov8" title="1">params := make(s2aModels.Params, 0)
+        for i, field := range fieldList.List </span><span class="cov8" title="1">{
+                fieldParams, err := p.field2Params(field)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("field #%d: %w", i, err)
+                }</span>
+
+                <span class="cov8" title="1">params = append(params, fieldParams...)</span>
+        }
+
+        <span class="cov8" title="1">return params, nil</span>
+}
+
+// field2Params converts an *[ast.Field] into a [s2aModels.Params].
+func (p *Parser) field2Params(field *ast.Field) (s2aModels.Params, error) <span class="cov8" title="1">{
+        if field == nil </span><span class="cov8" title="1">{
+                return make(s2aModels.Params, 0), nil
+        }</span>
+
+        <span class="cov8" title="1">typeExpr, paramType, err := p.getType(field.Type)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("type: %w", err)
+        }</span>
+
+        // if no names, then it's an unnamed field.
+        <span class="cov8" title="1">if len(field.Names) == 0 </span><span class="cov8" title="1">{
+                return s2aModels.Params{{Field: s2aModels.Field{Name: "", TypeExpr: typeExpr}, Type: paramType}}, nil
+        }</span>
+
+        // Several fields with different names and the same type.
+        <span class="cov8" title="1">params := make(s2aModels.Params, 0, len(field.Names))
+        for _, name := range field.Names </span><span class="cov8" title="1">{
+                params = append(params, s2aModels.Param{Field: s2aModels.Field{Name: name.Name, TypeExpr: typeExpr}, Type: paramType})
+        }</span>
+
+        <span class="cov8" title="1">return params, nil</span>
+}
+
+// fieldList2Results converts an *[ast.FieldList] into a [s2aModels.Results].
+func (p *Parser) fieldList2Results(fieldList *ast.FieldList) (s2aModels.Results, error) <span class="cov8" title="1">{
+        if fieldList == nil </span><span class="cov8" title="1">{
+                return make(s2aModels.Results, 0), nil
+        }</span>
+
+        <span class="cov8" title="1">results := make(s2aModels.Results, 0)
+        idx := 0
+        for _, field := range fieldList.List </span><span class="cov8" title="1">{
+                fieldResults, err := p.field2Results(field, idx)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("field #%d: %w", idx, err)
+                }</span>
+
+                <span class="cov8" title="1">results = append(results, fieldResults...)
+                idx += len(fieldResults)</span>
+        }
+
+        <span class="cov8" title="1">return results, nil</span>
+}
+
+// field2Results converts an *[ast.Field] into a s2aModels.Results
+//
+// Gives a default name to the unnamed results.
+func (p *Parser) field2Results(field *ast.Field, idx int) (s2aModels.Results, error) <span class="cov8" title="1">{
+        if field == nil </span><span class="cov8" title="1">{
+                return make(s2aModels.Results, 0), nil
+        }</span>
+
+        <span class="cov8" title="1">typeExpr, _, err := p.getType(field.Type)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("type: %w", err)
+        }</span>
+
+        // if no names, then it's an unnamed field.
+        <span class="cov8" title="1">if len(field.Names) == 0 </span><span class="cov8" title="1">{
+                return s2aModels.Results{{Field: s2aModels.Field{Name: fmt.Sprintf("res%d", idx), TypeExpr: typeExpr}}}, nil
+        }</span>
+
+        // Several fields with different names and the same type.
+        <span class="cov8" title="1">results := make(s2aModels.Results, 0, len(field.Names))
+        for _, name := range field.Names </span><span class="cov8" title="1">{
+                results = append(results, s2aModels.Result{Field: s2aModels.Field{Name: name.Name, TypeExpr: typeExpr}})
+        }</span>
+
+        <span class="cov8" title="1">return results, nil</span>
+}
+
+// getType parses a type expression and a [s2aModels.ParamType] from an [ast.Expr].
+func (p *Parser) getType(expr ast.Expr) (string, s2aModels.ParamType, error) <span class="cov8" title="1">{
+        var buf bytes.Buffer
+
+        if err := printer.Fprint(&amp;buf, token.NewFileSet(), expr); err != nil </span><span class="cov0" title="0">{
+                return "", "", fmt.Errorf("print: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">typeExpr := buf.String()
+
+        paramType, err := p.getParamType(typeExpr)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", "", fmt.Errorf("param type: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return typeExpr, paramType, nil</span>
+}
+
+// getParamType parses a [s2aModels.ParamType] from a type expression.
+func (p *Parser) getParamType(typeExpr string) (s2aModels.ParamType, error) <span class="cov8" title="1">{
+        var paramType s2aModels.ParamType
+
+        // Trying to parse a simple type.
+        switch typeExpr </span>{
+        case "uint8", "int8", "uint16", "int16", "byte", "int32", "uint32", "rune", "uint64", "int64", "int", "uint":<span class="cov8" title="1">
+                paramType = s2aModels.Int</span>
+        case "float32", "float64":<span class="cov8" title="1">
+                paramType = s2aModels.Float</span>
+        case "bool":<span class="cov0" title="0">
+                paramType = s2aModels.Bool</span>
+        case "string":<span class="cov8" title="1">
+                paramType = s2aModels.String</span>
+        case "error":<span class="cov8" title="1">
+                paramType = s2aModels.Error</span>
+        case "interface{}", "any":<span class="cov8" title="1">
+                paramType = s2aModels.Any</span>
+        }
+
+        <span class="cov8" title="1">if paramType != "" </span><span class="cov8" title="1">{
+                return paramType, nil
+        }</span>
+
+        // Prefix [] means a slice.
+        <span class="cov8" title="1">if strings.HasPrefix(typeExpr, "[]") </span><span class="cov8" title="1">{
+                // Trying to parse the slice item type.
+                subType, err := p.getParamType(typeExpr[2:])
+                if err != nil </span><span class="cov0" title="0">{
+                        return "", err
+                }</span>
+
+                // Returning a slice.
+                <span class="cov8" title="1">return subType.SliceOf(), nil</span>
+        }
+
+        // Prefix map[ means a slice.
+        <span class="cov8" title="1">if strings.HasPrefix(typeExpr, "map[") </span><span class="cov8" title="1">{
+                _, after, found := strings.Cut(typeExpr, "]")
+
+                if !found </span><span class="cov8" title="1">{
+                        return "", fmt.Errorf("invalid map type: '%s'", typeExpr)
+                }</span>
+
+                // Trying to parse the map value type.
+                <span class="cov8" title="1">subType, err := p.getParamType(after)
+                if err != nil </span><span class="cov0" title="0">{
+                        return "", err
+                }</span>
+
+                // Returning a slice.
+                <span class="cov8" title="1">return subType.MapOf(), nil</span>
+        }
+
+        // If custom type, then adding the package name.
+        <span class="cov8" title="1">paramType = s2aModels.ParamType(typeExpr)
+        if !strings.Contains(typeExpr, ".") </span><span class="cov8" title="1">{
+                paramType = s2aModels.ParamType(p.PkgName) + "." + paramType
+        }</span>
+
+        // Returning a custom type.
+        <span class="cov8" title="1">return paramType.CustomOf(), nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file24" style="display: none">package statuses
+
+// statusCode is an HTTP status code.
+type statusCode int
+
+const (
+        statusContinue                           statusCode = 100
+        statusSwitchingProtocols                 statusCode = 101
+        statusProcessing                         statusCode = 102
+        statusEarlyHints                         statusCode = 103
+        statusOK                                 statusCode = 200
+        statusCreated                            statusCode = 201
+        statusAccepted                           statusCode = 202
+        statusNonAuthoritativeInfo               statusCode = 203
+        statusNoContent                          statusCode = 204
+        statusResetContent                       statusCode = 205
+        statusPartialContent                     statusCode = 206
+        statusMultiStatus                        statusCode = 207
+        statusAlreadyReported                    statusCode = 208
+        statusIMUsed                             statusCode = 226
+        statusMultipleChoices                    statusCode = 300
+        statusMovedPermanently                   statusCode = 301
+        statusFound                              statusCode = 302
+        statusSeeOther                           statusCode = 303
+        statusNotModified                        statusCode = 304
+        statusUseProxy                           statusCode = 305
+        statusTemporaryRedirect                  statusCode = 307
+        statusPermanentRedirect                  statusCode = 308
+        statusBadRequestError                    statusCode = 400
+        statusUnauthorizedError                  statusCode = 401
+        statusPaymentRequiredError               statusCode = 402
+        statusForbiddenError                     statusCode = 403
+        statusNotFoundError                      statusCode = 404
+        statusMethodNotAllowedError              statusCode = 405
+        statusNotAcceptableError                 statusCode = 406
+        statusProxyAuthRequiredError             statusCode = 407
+        statusRequestTimeoutError                statusCode = 408
+        statusConflictError                      statusCode = 409
+        statusGoneError                          statusCode = 410
+        statusLengthRequiredError                statusCode = 411
+        statusPreconditionFailedError            statusCode = 412
+        statusRequestEntityTooLargeError         statusCode = 413
+        statusRequestURITooLongError             statusCode = 414
+        statusUnsupportedMediaTypeError          statusCode = 415
+        statusRequestedRangeNotSatisfiableError  statusCode = 416
+        statusExpectationFailedError             statusCode = 417
+        statusTeapotError                        statusCode = 418
+        statusMisdirectedRequestError            statusCode = 421
+        statusUnprocessableEntityError           statusCode = 422
+        statusLockedError                        statusCode = 423
+        statusFailedDependencyError              statusCode = 424
+        statusTooEarlyError                      statusCode = 425
+        statusUpgradeRequiredError               statusCode = 426
+        statusPreconditionRequiredError          statusCode = 428
+        statusTooManyRequestsError               statusCode = 429
+        statusRequestHeaderFieldsTooLargeError   statusCode = 431
+        statusUnavailableForLegalReasonsError    statusCode = 451
+        statusInternalServerErrorError           statusCode = 500
+        statusNotImplementedError                statusCode = 501
+        statusBadGatewayError                    statusCode = 502
+        statusServiceUnavailableError            statusCode = 503
+        statusGatewayTimeoutError                statusCode = 504
+        statusHTTPVersionNotSupportedError       statusCode = 505
+        statusVariantAlsoNegotiatesError         statusCode = 506
+        statusInsufficientStorageError           statusCode = 507
+        statusLoopDetectedError                  statusCode = 508
+        statusNotExtendedError                   statusCode = 510
+        statusNetworkAuthenticationRequiredError statusCode = 511
+)
+
+// statusCodeWrappingError is a status code error wrapper.
+//
+// Holds an error with a status code.
+type statusCodeWrappingError struct {
+        sc  statusCode
+        err error
+}
+
+// Code returns the status code.
+func (wr *statusCodeWrappingError) Code() int <span class="cov8" title="1">{
+        return int(wr.sc)
+}</span>
+
+// Unwrap returns the wrapped error.
+func (wr *statusCodeWrappingError) Unwrap() error <span class="cov8" title="1">{
+        return wr.err
+}</span>
+
+// Error returns the wrapped error message.
+func (wr *statusCodeWrappingError) Error() string <span class="cov8" title="1">{
+        if wr.err != nil </span><span class="cov8" title="1">{
+                return wr.err.Error()
+        }</span>
+        <span class="cov0" title="0">return ""</span>
+}
+
+// wrapError wraps an error with a status code.
+func wrapError(sc statusCode, err error) *statusCodeWrappingError <span class="cov8" title="1">{
+        return &amp;statusCodeWrappingError{
+                sc:  sc,
+                err: err,
+        }
+}</span>
+
+// StatusCodeErrorWrapper is a status code error wrapper.
+//
+// Wraps an error with some status code.
+type StatusCodeErrorWrapper func(err error) error
+
+var (
+        Continue                           StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusContinue, err) }</span>
+        SwitchingProtocols                 StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusSwitchingProtocols, err) }</span>
+        Processing                         StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusProcessing, err) }</span>
+        EarlyHints                         StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusEarlyHints, err) }</span>
+        OK                                 StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusOK, err) }</span>
+        Created                            StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusCreated, err) }</span>
+        Accepted                           StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusAccepted, err) }</span>
+        NonAuthoritativeInfo               StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusNonAuthoritativeInfo, err) }</span>
+        NoContent                          StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusNoContent, err) }</span>
+        ResetContent                       StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusResetContent, err) }</span>
+        PartialContent                     StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusPartialContent, err) }</span>
+        MultiStatus                        StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusMultiStatus, err) }</span>
+        AlreadyReported                    StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusAlreadyReported, err) }</span>
+        IMUsed                             StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusIMUsed, err) }</span>
+        MultipleChoices                    StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusMultipleChoices, err) }</span>
+        MovedPermanently                   StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusMovedPermanently, err) }</span>
+        Found                              StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusFound, err) }</span>
+        SeeOther                           StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusSeeOther, err) }</span>
+        NotModified                        StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusNotModified, err) }</span>
+        UseProxy                           StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusUseProxy, err) }</span>
+        TemporaryRedirect                  StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusTemporaryRedirect, err) }</span>
+        PermanentRedirect                  StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusPermanentRedirect, err) }</span>
+        BadRequestError                    StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusBadRequestError, err) }</span>
+        UnauthorizedError                  StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusUnauthorizedError, err) }</span>
+        PaymentRequiredError               StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusPaymentRequiredError, err) }</span>
+        ForbiddenError                     StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusForbiddenError, err) }</span>
+        NotFoundError                      StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusNotFoundError, err) }</span>
+        MethodNotAllowedError              StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusMethodNotAllowedError, err) }</span>
+        NotAcceptableError                 StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusNotAcceptableError, err) }</span>
+        ProxyAuthRequiredError             StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusProxyAuthRequiredError, err) }</span>
+        RequestTimeoutError                StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusRequestTimeoutError, err) }</span>
+        ConflictError                      StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusConflictError, err) }</span>
+        GoneError                          StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusGoneError, err) }</span>
+        LengthRequiredError                StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusLengthRequiredError, err) }</span>
+        PreconditionFailedError            StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusPreconditionFailedError, err) }</span>
+        RequestEntityTooLargeError         StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusRequestEntityTooLargeError, err) }</span>
+        RequestURITooLongError             StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusRequestURITooLongError, err) }</span>
+        UnsupportedMediaTypeError          StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusUnsupportedMediaTypeError, err) }</span>
+        RequestedRangeNotSatisfiableError  StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusRequestedRangeNotSatisfiableError, err) }</span>
+        ExpectationFailedError             StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusExpectationFailedError, err) }</span>
+        TeapotError                        StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusTeapotError, err) }</span>
+        MisdirectedRequestError            StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusMisdirectedRequestError, err) }</span>
+        UnprocessableEntityError           StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusUnprocessableEntityError, err) }</span>
+        LockedError                        StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusLockedError, err) }</span>
+        FailedDependencyError              StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusFailedDependencyError, err) }</span>
+        TooEarlyError                      StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusTooEarlyError, err) }</span>
+        UpgradeRequiredError               StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusUpgradeRequiredError, err) }</span>
+        PreconditionRequiredError          StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusPreconditionRequiredError, err) }</span>
+        TooManyRequestsError               StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusTooManyRequestsError, err) }</span>
+        RequestHeaderFieldsTooLargeError   StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusRequestHeaderFieldsTooLargeError, err) }</span>
+        UnavailableForLegalReasonsError    StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusUnavailableForLegalReasonsError, err) }</span>
+        InternalServerErrorError           StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusInternalServerErrorError, err) }</span>
+        NotImplementedError                StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusNotImplementedError, err) }</span>
+        BadGatewayError                    StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusBadGatewayError, err) }</span>
+        ServiceUnavailableError            StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusServiceUnavailableError, err) }</span>
+        GatewayTimeoutError                StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusGatewayTimeoutError, err) }</span>
+        HTTPVersionNotSupportedError       StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusHTTPVersionNotSupportedError, err) }</span>
+        VariantAlsoNegotiatesError         StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusVariantAlsoNegotiatesError, err) }</span>
+        InsufficientStorageError           StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusInsufficientStorageError, err) }</span>
+        LoopDetectedError                  StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusLoopDetectedError, err) }</span>
+        NotExtendedError                   StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusNotExtendedError, err) }</span>
+        NetworkAuthenticationRequiredError StatusCodeErrorWrapper = func(err error) error <span class="cov8" title="1">{ return wrapError(statusNetworkAuthenticationRequiredError, err) }</span>
+)
+</pre>
+		
+		<pre class="file" id="file25" style="display: none">package utils
+
+import (
+        "path"
+        "strings"
+)
+
+// IsGoSource checks that the file is a valid Golang source code file.
+func IsGoSource(name string) bool <span class="cov8" title="1">{
+        return path.Ext(name) == ".go" &amp;&amp; !strings.HasSuffix(name, "_test.go") &amp;&amp; path.Base(name) != "generated.go"
+}</span>
+</pre>
+		
+		<pre class="file" id="file26" style="display: none">package validator
+
+import (
+        "errors"
+        "fmt"
+        "os"
+)
+
+var (
+        errPathNotExist = errors.New("path doesn't exist")
+        errNotDirectory = errors.New("not a directory")
+        errNotFile      = errors.New("not a file")
+)
+
+// ValidatePkg validates that the source code directory exists.
+func ValidatePkg(pkgPath string) error <span class="cov8" title="1">{
+        info, err := os.Stat(pkgPath)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(err, os.ErrNotExist) </span><span class="cov8" title="1">{
+                        return errPathNotExist
+                }</span>
+                <span class="cov0" title="0">return fmt.Errorf("path stat: %w", err)</span>
+        }
+
+        <span class="cov8" title="1">if !info.IsDir() </span><span class="cov8" title="1">{
+                return errNotDirectory
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// ValidateMainFile validates that the swag main file exists.
+func ValidateMainFile(mainPath string) error <span class="cov8" title="1">{
+        info, err := os.Stat(mainPath)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(err, os.ErrNotExist) </span><span class="cov8" title="1">{
+                        return errPathNotExist
+                }</span>
+                <span class="cov0" title="0">return fmt.Errorf("path stat: %w", err)</span>
+        }
+
+        <span class="cov8" title="1">if info.IsDir() </span><span class="cov8" title="1">{
+                return errNotFile
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+// ValidateAPIFile validates that the generated API file doesn't exists.
+// Deletes the file if it already exists.
+func ValidateAPIFile(apiPath string) error <span class="cov8" title="1">{
+        info, err := os.Stat(apiPath)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(err, os.ErrNotExist) </span><span class="cov8" title="1">{
+                        return nil
+                }</span>
+                <span class="cov0" title="0">return fmt.Errorf("path stat: %w", err)</span>
+        }
+
+        <span class="cov8" title="1">if info.IsDir() </span><span class="cov8" title="1">{
+                return errNotFile
+        }</span>
+
+        <span class="cov8" title="1">if err = os.Remove(apiPath); err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("removing: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return nil</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
