@@ -2,12 +2,14 @@ module github.com/KianIt/swag2api
 
 go 1.25.4
 
-require github.com/go-openapi/spec v0.22.3
+require (
+	github.com/go-openapi/spec v0.22.3
+	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d
+)
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	golang.org/x/mod v0.17.0 // indirect
-	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
 )
 
 require (
